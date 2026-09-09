@@ -1,3 +1,5 @@
+import ScrollReveal from "./ScrollReveal";
+
 const FAQS = [
   {
     q: "Para que sirve rentar un contenedor maritimo en una obra?",
@@ -41,46 +43,66 @@ export default function FAQ() {
       style={{ backgroundColor: "var(--color-bg)" }}
     >
       <div className="mx-auto max-w-[var(--content-width)] px-[var(--gutter)]">
-        <h2
-          className="text-[length:var(--text-3xl)] md:text-[length:var(--text-4xl)] mb-12"
-          style={{ color: "var(--color-text)", lineHeight: 1.1 }}
-        >
-          Preguntas frecuentes
-        </h2>
+        <ScrollReveal>
+          <h2
+            className="text-[length:var(--text-3xl)] md:text-[length:var(--text-4xl)] mb-14"
+            style={{ color: "var(--color-text)", lineHeight: 1.1 }}
+          >
+            Preguntas frecuentes
+          </h2>
+        </ScrollReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-0">
           {FAQS.map((faq, i) => (
-            <article
-              key={i}
-              className="flex flex-col gap-3"
-              style={{
-                paddingBottom: "1.5rem",
-                borderBottom: "var(--border-width) solid var(--color-border)",
-              }}
-            >
-              <h3
+            <ScrollReveal key={i} delay={i * 60}>
+              <article
+                className="flex gap-5 py-7"
                 style={{
-                  fontFamily: "var(--font-heading)",
-                  fontSize: "var(--text-lg)",
-                  fontWeight: 600,
-                  color: "var(--color-text)",
-                  lineHeight: 1.3,
-                  letterSpacing: "var(--heading-tracking)",
+                  borderBottom:
+                    "var(--border-width) solid var(--color-border)",
                 }}
               >
-                {faq.q}
-              </h3>
-              <p
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "var(--text-sm)",
-                  color: "var(--color-text-muted)",
-                  lineHeight: 1.7,
-                }}
-              >
-                {faq.a}
-              </p>
-            </article>
+                {/* Editorial number */}
+                <span
+                  className="shrink-0 mt-0.5"
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "var(--text-3xl)",
+                    fontWeight: 700,
+                    color: "var(--color-border)",
+                    lineHeight: 1,
+                    minWidth: "2.5rem",
+                  }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+
+                <div className="flex flex-col gap-3">
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-heading)",
+                      fontSize: "var(--text-lg)",
+                      fontWeight: 600,
+                      color: "var(--color-text)",
+                      lineHeight: 1.3,
+                      letterSpacing: "var(--heading-tracking)",
+                    }}
+                  >
+                    {faq.q}
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-sm)",
+                      color: "var(--color-text-muted)",
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    {faq.a}
+                  </p>
+                </div>
+              </article>
+            </ScrollReveal>
           ))}
         </div>
       </div>

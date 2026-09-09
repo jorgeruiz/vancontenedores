@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { MapPin } from "@phosphor-icons/react/dist/ssr";
+import ScrollReveal from "./ScrollReveal";
 
 const CITIES = [
   { name: "Monterrey", region: "Nuevo Leon" },
@@ -24,8 +25,8 @@ export default function Coverage() {
       }}
     >
       <div className="mx-auto max-w-[var(--content-width)] px-[var(--gutter)]">
-        <div className="flex flex-col gap-12">
-          <div className="flex flex-col gap-4 max-w-[50ch]">
+        <ScrollReveal>
+          <div className="flex flex-col gap-4 max-w-[50ch] mb-12">
             <h2
               className="text-[length:var(--text-3xl)] md:text-[length:var(--text-4xl)]"
               style={{ color: "var(--color-text)", lineHeight: 1.1 }}
@@ -43,15 +44,24 @@ export default function Coverage() {
               5 sucursales estrategicas que cubren las principales zonas industriales de Mexico. Entrega directa en tu obra o instalacion.
             </p>
           </div>
+        </ScrollReveal>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-            {/* Map - 3/5 */}
+        <ScrollReveal delay={100}>
+          {/* Full-width map with double-bezel */}
+          <div
+            className="p-1.5 mb-10"
+            style={{
+              backgroundColor: "rgba(255,255,255,0.02)",
+              borderRadius: "calc(var(--radius) + 6px)",
+              border: "var(--border-width) solid var(--color-border)",
+            }}
+          >
             <div
-              className="lg:col-span-3 relative aspect-[3/2] overflow-hidden"
+              className="relative aspect-[2.4/1] overflow-hidden"
               style={{
                 borderRadius: "var(--radius)",
-                border: "var(--border-width) solid var(--color-border)",
                 backgroundColor: "var(--color-bg)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
               }}
             >
               <Image
@@ -59,46 +69,55 @@ export default function Coverage() {
                 alt="Mapa de Mexico con las 8 ciudades de cobertura de VAN Contenedores"
                 fill
                 className="object-contain"
-                sizes="(max-width: 1024px) 100vw, 60vw"
+                sizes="(max-width: 1024px) 100vw, 1280px"
               />
             </div>
-
-            {/* Cities grid - 2/5 */}
-            <div className="lg:col-span-2 grid grid-cols-2 gap-x-6 gap-y-5 content-start">
-              {CITIES.map((city) => (
-                <div key={city.name} className="flex items-start gap-2">
-                  <MapPin
-                    size={16}
-                    weight="fill"
-                    className="mt-1 shrink-0"
-                    style={{ color: "var(--color-primary)" }}
-                  />
-                  <div>
-                    <p
-                      style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: "var(--text-sm)",
-                        fontWeight: 600,
-                        color: "var(--color-text)",
-                        lineHeight: 1.4,
-                      }}
-                    >
-                      {city.name}
-                    </p>
-                    <p
-                      style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: "var(--text-xs)",
-                        color: "var(--color-text-muted)",
-                      }}
-                    >
-                      {city.region}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
+        </ScrollReveal>
+
+        {/* Cities grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {CITIES.map((city, i) => (
+            <ScrollReveal key={city.name} delay={200 + i * 60}>
+              <div
+                className="flex items-center gap-3 p-4"
+                style={{
+                  borderRadius: "var(--radius)",
+                  border: "var(--border-width) solid var(--color-border)",
+                  backgroundColor: "var(--color-bg)",
+                }}
+              >
+                <MapPin
+                  size={16}
+                  weight="fill"
+                  className="shrink-0"
+                  style={{ color: "var(--color-primary)" }}
+                />
+                <div>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-sm)",
+                      fontWeight: 600,
+                      color: "var(--color-text)",
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {city.name}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-xs)",
+                      color: "var(--color-text-muted)",
+                    }}
+                  >
+                    {city.region}
+                  </p>
+                </div>
+              </div>
+            </ScrollReveal>
+          ))}
         </div>
       </div>
     </section>
