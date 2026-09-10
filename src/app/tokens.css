@@ -16,6 +16,13 @@
   --color-border: #1E2A36;
   --color-error: #DC2626;
 
+  /* Light section tokens */
+  --color-bg-light: #F0F2F5;
+  --color-surface-light: #FFFFFF;
+  --color-text-dark: #0A0F14;
+  --color-text-muted-dark: #4A5568;
+  --color-border-light: #D4D9E0;
+
   /* Typography */
   --font-heading: 'Geist', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;

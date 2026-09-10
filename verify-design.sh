@@ -58,6 +58,9 @@ if [ -n "$SRC_DIRS" ]; then
     | grep -vi '#7A8A9A\|#7a8a9a' \
     | grep -vi '#1E2A36\|#1e2a36' \
     | grep -vi '#DC2626\|#dc2626' \
+    | grep -vi '#F0F2F5\|#f0f2f5' \
+    | grep -vi '#D4D9E0\|#d4d9e0' \
+    | grep -vi '#4A5568\|#4a5568' \
     || true)
   if [ -n "$BAD_HEX" ]; then
     echo "FAIL: Hex colors outside the 7-token palette + error:"
