@@ -23,7 +23,8 @@ export default function Footer() {
             <img
               src="/images/logo-van.webp"
               alt="VAN Contenedores"
-              className="h-8 w-auto brightness-0 invert"
+              style={{ height: "2rem", width: "auto", maxWidth: "160px", objectFit: "contain" }}
+              className="brightness-0 invert"
             />
             <p
               style={{

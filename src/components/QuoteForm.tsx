@@ -93,8 +93,20 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
                 letterSpacing: "var(--heading-tracking)",
               }}
             >
-              {step === 1 ? "Configura tu contenedor" : "Datos de contacto"}
+              Cotiza por WhatsApp
             </h3>
+            <p
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "var(--text-xs)",
+                color: "var(--color-text-muted-dark)",
+                marginTop: "2px",
+              }}
+            >
+              {step === 1
+                ? "Llena la siguiente informacion para ofrecerte un mejor servicio"
+                : "Completa tus datos de contacto"}
+            </p>
             <p
               style={{
                 fontFamily: "var(--font-mono)",

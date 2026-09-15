@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { WhatsappLogo, ArrowRight, Phone, Envelope } from "@phosphor-icons/react";
+import { ArrowRight, Phone, Envelope, PaperPlaneTilt } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 
 function trackConversion(type: "form_submit" | "whatsapp_click") {
@@ -28,14 +28,16 @@ export default function CTAFinal() {
 
   const allFilled = size && use && city && name && phone;
 
+  const [submitted, setSubmitted] = useState(false);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!allFilled) return;
 
     trackConversion("form_submit");
 
-    const message = encodeURIComponent(
-      `Hola, me interesa rentar un contenedor.\n\n` +
+    const subject = encodeURIComponent(`Cotizacion - ${name} - ${size} - ${city}`);
+    const body = encodeURIComponent(
       `Nombre: ${name}\n` +
       `Empresa: ${company || "N/A"}\n` +
       `Telefono: ${phone}\n` +
@@ -44,8 +46,8 @@ export default function CTAFinal() {
       `Ciudad: ${city}`
     );
 
-    trackConversion("whatsapp_click");
-    window.open(`https://wa.me/528184692252?text=${message}`, "_blank");
+    window.location.href = `mailto:ventas@vancontenedores.com?subject=${subject}&body=${body}`;
+    setSubmitted(true);
   };
 
   const inputStyle = {
@@ -294,15 +296,17 @@ export default function CTAFinal() {
                     lineHeight: 1.5,
                   }}
                 >
-                  Al enviar, seras redirigido a WhatsApp con tu solicitud pre-llenada para recibir cotizacion inmediata.
+                  {submitted
+                    ? "Solicitud enviada. Nuestro equipo te contactara en breve."
+                    : "Te enviaremos tu cotizacion por correo electronico."}
                 </p>
                 <button
                   type="submit"
                   disabled={!allFilled}
                   className="shrink-0 inline-flex items-center gap-2 transition-transform active:scale-[0.98]"
                   style={{
-                    backgroundColor: allFilled ? "#25D366" : "var(--color-border-light)",
-                    color: allFilled ? "#FFFFFF" : "var(--color-text-muted-dark)",
+                    backgroundColor: allFilled ? "var(--color-primary)" : "var(--color-border-light)",
+                    color: allFilled ? "var(--color-on-primary)" : "var(--color-text-muted-dark)",
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-base)",
                     fontWeight: 600,
@@ -311,8 +315,8 @@ export default function CTAFinal() {
                     cursor: allFilled ? "pointer" : "not-allowed",
                   }}
                 >
-                  <WhatsappLogo size={20} weight="fill" />
-                  Enviar por WhatsApp
+                  <PaperPlaneTilt size={18} weight="fill" />
+                  Enviar cotizacion
                   <ArrowRight size={14} weight="bold" />
                 </button>
               </div>

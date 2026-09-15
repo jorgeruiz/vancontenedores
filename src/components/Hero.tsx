@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight } from "@phosphor-icons/react";
+import { ArrowRight, WhatsappLogo } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { useQuote } from "./QuoteProvider";
 
@@ -33,7 +33,7 @@ export default function Hero() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(10,15,20,0.92) 0%, rgba(10,15,20,0.75) 30%, rgba(10,15,20,0.3) 55%, rgba(10,15,20,0.05) 75%, transparent 100%)",
+              "linear-gradient(to bottom, rgba(10,15,20,0.95) 0%, rgba(10,15,20,0.85) 35%, rgba(10,15,20,0.45) 60%, rgba(10,15,20,0.1) 80%, transparent 100%)",
           }}
         />
       </div>
@@ -132,8 +132,8 @@ export default function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-              <button
-                onClick={openQuote}
+              <a
+                href="#contacto"
                 className="inline-flex items-center justify-center gap-3 transition-transform active:scale-[0.98]"
                 style={{
                   backgroundColor: "var(--color-primary)",
@@ -143,10 +143,9 @@ export default function Hero() {
                   fontWeight: 600,
                   padding: "1rem 2rem",
                   borderRadius: "var(--radius)",
-                  cursor: "pointer",
                 }}
               >
-                Cotiza!
+                Cotiza en linea
                 <span
                   className="flex items-center justify-center"
                   style={{
@@ -158,13 +157,14 @@ export default function Hero() {
                 >
                   <ArrowRight size={14} weight="bold" />
                 </span>
-              </button>
-              <a
-                href="tel:+528184692252"
-                className="inline-flex items-center justify-center"
+              </a>
+              <button
+                onClick={openQuote}
+                className="inline-flex items-center justify-center gap-3"
                 style={{
-                  fontFamily: "var(--font-mono)",
+                  fontFamily: "var(--font-body)",
                   fontSize: "var(--text-sm)",
+                  fontWeight: 600,
                   color: "var(--color-text)",
                   padding: "1rem 1.5rem",
                   borderRadius: "var(--radius)",
@@ -172,10 +172,12 @@ export default function Hero() {
                   backgroundColor: "rgba(10,15,20,0.4)",
                   backdropFilter: "blur(4px)",
                   WebkitBackdropFilter: "blur(4px)",
+                  cursor: "pointer",
                 }}
               >
-                (81) 8469 2252
-              </a>
+                <WhatsappLogo size={18} weight="fill" style={{ color: "#25D366" }} />
+                WhatsApp
+              </button>
             </div>
           </motion.div>
 
