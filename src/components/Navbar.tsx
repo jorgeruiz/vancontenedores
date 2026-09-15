@@ -19,7 +19,7 @@ export default function Navbar() {
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-40"
-      style={{ backgroundColor: "rgba(10, 15, 20, 0.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderBottom: "var(--border-width) solid var(--color-border)" }}
+      style={{ backgroundColor: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", borderBottom: "var(--border-width) solid var(--color-border-light)" }}
     >
       <div className="mx-auto max-w-[var(--content-width)] px-[var(--gutter)] flex items-center justify-between h-16">
         {/* Logo */}
@@ -41,31 +41,30 @@ export default function Navbar() {
               key={item.href}
               href={item.href}
               className="transition-colors"
-              style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-muted)", transitionDuration: "var(--duration-max)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+              style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-muted-dark)", transitionDuration: "var(--duration-max)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text-dark)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted-dark)")}
             >
               {item.label}
             </a>
           ))}
 
-          {/* WhatsApp */}
-          <a
-            href="https://wa.me/528184692252"
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* WhatsApp - opens quote popup */}
+          <button
+            onClick={openQuote}
             className="flex items-center justify-center w-9 h-9 transition-colors"
             style={{
               borderRadius: "50%",
-              border: "var(--border-width) solid var(--color-border)",
-              color: "var(--color-text-muted)",
+              border: "var(--border-width) solid var(--color-border-light)",
+              color: "var(--color-text-muted-dark)",
+              cursor: "pointer",
             }}
-            aria-label="WhatsApp"
+            aria-label="Cotizar por WhatsApp"
             onMouseEnter={(e) => (e.currentTarget.style.color = "#25D366")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted-dark)")}
           >
             <WhatsappLogo size={18} weight="fill" />
-          </a>
+          </button>
 
           {/* Phone */}
           <a
@@ -74,10 +73,10 @@ export default function Navbar() {
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-xs)",
-              color: "var(--color-text-muted)",
+              color: "var(--color-text-muted-dark)",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text-dark)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted-dark)")}
           >
             <Phone size={14} weight="bold" />
             (81) 8469 2252
@@ -107,7 +106,7 @@ export default function Navbar() {
           className="lg:hidden flex items-center justify-center w-10 h-10"
           onClick={() => setOpen(!open)}
           aria-label={open ? "Cerrar menu" : "Abrir menu"}
-          style={{ color: "var(--color-text)" }}
+          style={{ color: "var(--color-text-dark)" }}
         >
           {open ? <X size={24} weight="bold" /> : <List size={24} weight="bold" />}
         </button>
@@ -117,7 +116,7 @@ export default function Navbar() {
       {open && (
         <div
           className="lg:hidden"
-          style={{ backgroundColor: "var(--color-surface)", borderTop: "var(--border-width) solid var(--color-border)" }}
+          style={{ backgroundColor: "var(--color-surface-light)", borderTop: "var(--border-width) solid var(--color-border-light)" }}
         >
           <div className="px-[var(--gutter)] py-6 flex flex-col gap-4">
             {NAV_ITEMS.map((item) => (
@@ -125,27 +124,25 @@ export default function Navbar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-base)", color: "var(--color-text)", padding: "0.5rem 0" }}
+                style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-base)", color: "var(--color-text-dark)", padding: "0.5rem 0" }}
               >
                 {item.label}
               </a>
             ))}
 
-            <div className="flex items-center gap-4 pt-2" style={{ borderTop: "var(--border-width) solid var(--color-border)" }}>
-              <a
-                href="https://wa.me/528184692252"
-                target="_blank"
-                rel="noopener noreferrer"
+            <div className="flex items-center gap-4 pt-2" style={{ borderTop: "var(--border-width) solid var(--color-border-light)" }}>
+              <button
+                onClick={() => { setOpen(false); openQuote(); }}
                 className="flex items-center gap-2"
-                style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "#25D366" }}
+                style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "#25D366", cursor: "pointer" }}
               >
                 <WhatsappLogo size={20} weight="fill" />
                 WhatsApp
-              </a>
+              </button>
               <a
                 href="tel:+528184692252"
                 className="flex items-center gap-2"
-                style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text)" }}
+                style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-dark)" }}
               >
                 <Phone size={16} weight="bold" />
                 (81) 8469 2252
