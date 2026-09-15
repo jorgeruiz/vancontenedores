@@ -17,16 +17,6 @@ interface ContainerSize {
 
 const CONTAINERS: ContainerSize[] = [
   {
-    id: "10ft",
-    label: "10 pies",
-    feet: 10,
-    length: 2.99,
-    width: 2.44,
-    height: 2.6,
-    image: "/images/container-10ft.webp",
-    capacity: "Ideal para herramientas y equipo menor",
-  },
-  {
     id: "20ft",
     label: "20 pies",
     feet: 20,
@@ -61,7 +51,7 @@ function useReducedMotion(): boolean {
 }
 
 export default function ContainerSelector() {
-  const [activeIndex, setActiveIndex] = useState(1);
+  const [activeIndex, setActiveIndex] = useState(0);
   const reducedMotion = useReducedMotion();
 
   const lengthRef = useRef<HTMLSpanElement>(null);
@@ -110,7 +100,7 @@ export default function ContainerSelector() {
       animateValue(heightRef, prev.height, next.height, "m");
 
       if (scaleBarRef.current) {
-        const maxLength = CONTAINERS[2].length;
+        const maxLength = CONTAINERS[CONTAINERS.length - 1].length;
         const pct = (next.length / maxLength) * 100;
         if (reducedMotion) {
           scaleBarRef.current.style.width = `${pct}%`;
@@ -147,7 +137,7 @@ export default function ContainerSelector() {
   );
 
   const active = CONTAINERS[activeIndex];
-  const maxLength = CONTAINERS[2].length;
+  const maxLength = CONTAINERS[CONTAINERS.length - 1].length;
   const initialPct = (active.length / maxLength) * 100;
 
   return (

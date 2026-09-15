@@ -7,6 +7,7 @@ import ContainerSelector from "@/components/ContainerSelector";
 import Construction from "@/components/Construction";
 import Coverage from "@/components/Coverage";
 import FAQ from "@/components/FAQ";
+import Gallery from "@/components/Gallery";
 import CTAFinal from "@/components/CTAFinal";
 import Footer from "@/components/Footer";
 
@@ -21,6 +22,7 @@ export default function Home() {
         <Differentiators />
         <ContainerSelector />
         <Construction />
+        <Gallery />
         <Coverage />
         <FAQ />
         <CTAFinal />

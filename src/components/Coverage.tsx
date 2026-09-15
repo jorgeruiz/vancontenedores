@@ -9,10 +9,8 @@ const CITIES = [
   { name: "Queretaro", region: "Queretaro" },
   { name: "Guadalajara", region: "Jalisco" },
   { name: "San Luis Potosi", region: "SLP" },
-  { name: "Veracruz", region: "Veracruz" },
   { name: "Altamira", region: "Tamaulipas" },
   { name: "Merida", region: "Yucatan" },
-  { name: "Tijuana", region: "Baja California" },
 ];
 
 export default function Coverage() {
@@ -71,7 +69,7 @@ export default function Coverage() {
 
         {/* Cities in a single horizontal row with dividers */}
         <div
-          className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
           style={{
             border: "var(--border-width) solid var(--color-border)",
             borderRadius: "var(--radius)",

@@ -113,7 +113,7 @@ export default function CTAFinal() {
               }}
             >
               <Image
-                src="/images/container-delivery-truck.webp"
+                src="/images/client-cargando-1.webp"
                 alt="Camion con grua entregando contenedor maritimo en obra"
                 fill
                 className="object-cover"

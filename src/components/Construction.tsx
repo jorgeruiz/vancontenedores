@@ -35,7 +35,7 @@ export default function Construction() {
             }}
           >
             <Image
-              src="/images/container-construction-site.webp"
+              src="/images/client-f1.webp"
               alt="Contenedor maritimo abierto en obra de construccion con materiales almacenados"
               fill
               className="object-cover"

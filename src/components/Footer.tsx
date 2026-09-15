@@ -20,17 +20,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
           {/* Company info */}
           <div className="flex flex-col gap-4">
-            <p
-              style={{
-                fontFamily: "var(--font-heading)",
-                fontSize: "var(--text-lg)",
-                fontWeight: 700,
-                color: "var(--color-text)",
-                letterSpacing: "var(--heading-tracking)",
-              }}
-            >
-              VAN Contenedores
-            </p>
+            <img
+              src="/images/logo-van.webp"
+              alt="VAN Contenedores"
+              className="h-8 w-auto brightness-0 invert"
+            />
             <p
               style={{
                 fontFamily: "var(--font-body)",
@@ -142,7 +136,7 @@ export default function Footer() {
                 marginTop: "0.5rem",
               }}
             >
-              Cobertura: Monterrey, Queretaro, Guadalajara, Veracruz, Altamira, Merida, Tijuana, San Luis Potosi
+              Cobertura: Monterrey, Queretaro, Guadalajara, San Luis Potosi, Altamira, Merida
             </p>
           </div>
         </div>

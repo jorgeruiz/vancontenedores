@@ -16,7 +16,7 @@ export default function Hero() {
       {/* Full-bleed image - cleaner, less overlay */}
       <div className="absolute inset-0">
         <Image
-          src="/images/hero-home.webp"
+          src="/images/client-m1.webp"
           alt="Contenedor maritimo de acero en terreno industrial"
           fill
           className="object-cover"
