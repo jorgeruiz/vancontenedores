@@ -15,7 +15,7 @@ export default function Hero() {
       className="relative overflow-hidden"
       style={{
         backgroundColor: "var(--color-bg)",
-        minHeight: "110dvh",
+        minHeight: "120dvh",
       }}
     >
       {/* Full-bleed image - positioned toward bottom so containers show */}
@@ -24,7 +24,7 @@ export default function Hero() {
           src="/images/client-m1.webp"
           alt="Fila de contenedores maritimos VAN Contenedores en patio industrial"
           fill
-          className="object-cover object-bottom"
+          className="object-cover object-top"
           priority
           sizes="100vw"
         />
