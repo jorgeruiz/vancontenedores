@@ -22,49 +22,56 @@ export default function Coverage() {
       className="relative py-20 md:py-28 overflow-hidden"
       style={{ backgroundColor: "var(--color-bg)" }}
     >
-      {/* Background map - full width, faded */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="relative w-full max-w-[1400px] aspect-[2/1] opacity-30">
-          <Image
-            src="/images/coverage-map.webp"
-            alt=""
-            fill
-            className="object-contain"
-            aria-hidden="true"
-            sizes="100vw"
-          />
-        </div>
-      </div>
-
-      <div className="relative z-10 mx-auto max-w-[var(--content-width)] px-[var(--gutter)]">
+      <div className="mx-auto max-w-[var(--content-width)] px-[var(--gutter)]">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-16"
+          className="mb-12"
         >
           <h2
-            className="text-[length:var(--text-3xl)] md:text-[length:var(--text-4xl)] lg:text-[length:4.5rem] mb-4"
+            className="text-[length:var(--text-3xl)] md:text-[length:var(--text-4xl)] mb-4"
             style={{
               color: "var(--color-text)",
-              lineHeight: 1.05,
-              letterSpacing: "-0.03em",
+              lineHeight: 1.1,
             }}
           >
             Cobertura nacional
           </h2>
           <p
-            className="mx-auto max-w-[45ch]"
+            className="max-w-[50ch]"
             style={{
               fontFamily: "var(--font-body)",
-              fontSize: "var(--text-lg)",
+              fontSize: "var(--text-base)",
               color: "var(--color-text-muted)",
-              lineHeight: 1.6,
+              lineHeight: 1.7,
             }}
           >
-            5 sucursales estrategicas cubriendo las principales zonas industriales de Mexico
+            6 sucursales estrategicas cubriendo las principales zonas industriales de Mexico
           </p>
+        </motion.div>
+
+        {/* Map - visible, prominent */}
+        <motion.div
+          initial={reduce ? false : { opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="relative aspect-[2.2/1] mb-10 overflow-hidden"
+          style={{
+            borderRadius: "var(--radius)",
+            border: "var(--border-width) solid var(--color-border)",
+            backgroundColor: "var(--color-surface)",
+          }}
+        >
+          <Image
+            src="/images/coverage-map.webp"
+            alt="Mapa de Mexico con las 6 ciudades de cobertura de VAN Contenedores"
+            fill
+            className="object-contain p-4"
+            sizes="(max-width: 1024px) 100vw, 1280px"
+          />
         </motion.div>
 
         {/* Cities in a single horizontal row with dividers */}
