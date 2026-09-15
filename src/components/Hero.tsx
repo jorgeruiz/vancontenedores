@@ -3,38 +3,43 @@
 import Image from "next/image";
 import { ArrowRight } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
+import { useQuote } from "./QuoteProvider";
 
 export default function Hero() {
   const reduce = useReducedMotion();
+  const { openQuote } = useQuote();
 
   return (
     <section
       id="hero"
-      className="relative min-h-[100dvh] overflow-hidden"
-      style={{ backgroundColor: "var(--color-bg)" }}
+      className="relative overflow-hidden"
+      style={{
+        backgroundColor: "var(--color-bg)",
+        minHeight: "110dvh",
+      }}
     >
-      {/* Full-bleed image - cleaner, less overlay */}
+      {/* Full-bleed image - positioned toward bottom so containers show */}
       <div className="absolute inset-0">
         <Image
           src="/images/client-m1.webp"
-          alt="Contenedor maritimo de acero en terreno industrial"
+          alt="Fila de contenedores maritimos VAN Contenedores en patio industrial"
           fill
-          className="object-cover"
+          className="object-cover object-bottom"
           priority
           sizes="100vw"
         />
-        {/* Lighter gradient - only bottom fade for text area */}
+        {/* Top-to-bottom gradient: dark at top (text area), clear at bottom (containers visible) */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to top, var(--color-bg) 0%, rgba(10,15,20,0.7) 30%, rgba(10,15,20,0.15) 60%, rgba(10,15,20,0.25) 100%)",
+              "linear-gradient(to bottom, rgba(10,15,20,0.92) 0%, rgba(10,15,20,0.75) 30%, rgba(10,15,20,0.3) 55%, rgba(10,15,20,0.05) 75%, transparent 100%)",
           }}
         />
       </div>
 
-      {/* Large display number */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none select-none hidden lg:block">
+      {/* Large display number - behind content */}
+      <div className="absolute right-0 top-[30%] -translate-y-1/2 pointer-events-none select-none hidden lg:block">
         <motion.span
           initial={reduce ? false : { opacity: 0, x: 80 }}
           animate={{ opacity: 1, x: 0 }}
@@ -45,7 +50,7 @@ export default function Hero() {
             fontSize: "clamp(12rem, 22vw, 20rem)",
             fontWeight: 700,
             color: "transparent",
-            WebkitTextStroke: "1px rgba(255,255,255,0.08)",
+            WebkitTextStroke: "1px rgba(255,255,255,0.06)",
             lineHeight: 0.85,
             letterSpacing: "-0.05em",
           }}
@@ -54,8 +59,8 @@ export default function Hero() {
         </motion.span>
       </div>
 
-      {/* Content pinned to bottom-left */}
-      <div className="relative z-10 min-h-[100dvh] flex flex-col justify-end pb-16 md:pb-20 pt-24">
+      {/* Content pinned to top */}
+      <div className="relative z-10 flex flex-col justify-start pt-28 md:pt-32 lg:pt-36 pb-16">
         <div className="mx-auto max-w-[var(--content-width)] px-[var(--gutter)] w-full">
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 40 }}
@@ -123,12 +128,12 @@ export default function Hero() {
                 lineHeight: 1.6,
               }}
             >
-              Almacenaje temporal en sitio para constructoras y empresas. Cobertura nacional desde 5 sucursales.
+              Almacenaje temporal en sitio para constructoras y empresas. Cobertura nacional desde 6 sucursales.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-              <a
-                href="#contacto"
+              <button
+                onClick={openQuote}
                 className="inline-flex items-center justify-center gap-3 transition-transform active:scale-[0.98]"
                 style={{
                   backgroundColor: "var(--color-primary)",
@@ -138,9 +143,10 @@ export default function Hero() {
                   fontWeight: 600,
                   padding: "1rem 2rem",
                   borderRadius: "var(--radius)",
+                  cursor: "pointer",
                 }}
               >
-                Solicitar un contenedor
+                Cotiza!
                 <span
                   className="flex items-center justify-center"
                   style={{
@@ -152,7 +158,7 @@ export default function Hero() {
                 >
                   <ArrowRight size={14} weight="bold" />
                 </span>
-              </a>
+              </button>
               <a
                 href="tel:+528184692252"
                 className="inline-flex items-center justify-center"
