@@ -10,58 +10,38 @@ export default function Hero() {
   const { openQuote } = useQuote();
 
   return (
-    <section
-      id="hero"
-      className="relative overflow-hidden"
-      style={{
-        backgroundColor: "var(--color-bg)",
-        minHeight: "120dvh",
-      }}
-    >
-      {/* Full-bleed image - positioned toward bottom so containers show */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/client-m1.webp"
-          alt="Fila de contenedores maritimos VAN Contenedores en patio industrial"
-          fill
-          className="object-cover object-top"
-          priority
-          sizes="100vw"
-        />
-        {/* Top-to-bottom gradient: dark at top (text area), clear at bottom (containers visible) */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(10,15,20,0.95) 0%, rgba(10,15,20,0.85) 35%, rgba(10,15,20,0.45) 60%, rgba(10,15,20,0.1) 80%, transparent 100%)",
-          }}
-        />
-      </div>
+    <section id="hero">
+      {/* Block 1: Solid dark background with content - 70vh */}
+      <div
+        className="relative flex flex-col justify-center"
+        style={{
+          backgroundColor: "var(--color-bg)",
+          minHeight: "70dvh",
+          paddingTop: "5rem",
+        }}
+      >
+        {/* Large display number */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none select-none hidden lg:block">
+          <motion.span
+            initial={reduce ? false : { opacity: 0, x: 80 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1.2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="block"
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "clamp(12rem, 22vw, 20rem)",
+              fontWeight: 700,
+              color: "transparent",
+              WebkitTextStroke: "1px rgba(255,255,255,0.06)",
+              lineHeight: 0.85,
+              letterSpacing: "-0.05em",
+            }}
+          >
+            24h
+          </motion.span>
+        </div>
 
-      {/* Large display number - behind content */}
-      <div className="absolute right-0 top-[30%] -translate-y-1/2 pointer-events-none select-none hidden lg:block">
-        <motion.span
-          initial={reduce ? false : { opacity: 0, x: 80 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1.2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="block"
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "clamp(12rem, 22vw, 20rem)",
-            fontWeight: 700,
-            color: "transparent",
-            WebkitTextStroke: "1px rgba(255,255,255,0.06)",
-            lineHeight: 0.85,
-            letterSpacing: "-0.05em",
-          }}
-        >
-          24h
-        </motion.span>
-      </div>
-
-      {/* Content pinned to top */}
-      <div className="relative z-10 flex flex-col justify-start pt-28 md:pt-32 lg:pt-36 pb-16">
-        <div className="mx-auto max-w-[var(--content-width)] px-[var(--gutter)] w-full">
+        <div className="relative z-10 mx-auto max-w-[var(--content-width)] px-[var(--gutter)] w-full py-12 md:py-16">
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -71,10 +51,8 @@ export default function Hero() {
               className="inline-flex items-center gap-2 mb-8 px-4 py-2"
               style={{
                 borderRadius: "var(--radius)",
-                border: "var(--border-width) solid rgba(255,255,255,0.15)",
-                backgroundColor: "rgba(10,15,20,0.5)",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
+                border: "var(--border-width) solid var(--color-border)",
+                backgroundColor: "var(--color-surface)",
               }}
             >
               <span
@@ -124,7 +102,7 @@ export default function Hero() {
               style={{
                 fontFamily: "var(--font-body)",
                 fontSize: "var(--text-lg)",
-                color: "rgba(232,236,240,0.85)",
+                color: "var(--color-text-muted)",
                 lineHeight: 1.6,
               }}
             >
@@ -168,10 +146,8 @@ export default function Hero() {
                   color: "var(--color-text)",
                   padding: "1rem 1.5rem",
                   borderRadius: "var(--radius)",
-                  border: "var(--border-width) solid rgba(255,255,255,0.15)",
-                  backgroundColor: "rgba(10,15,20,0.4)",
-                  backdropFilter: "blur(4px)",
-                  WebkitBackdropFilter: "blur(4px)",
+                  border: "var(--border-width) solid var(--color-border)",
+                  backgroundColor: "var(--color-surface)",
                   cursor: "pointer",
                 }}
               >
@@ -187,22 +163,45 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.7 }}
             className="mt-12 pt-6 flex flex-wrap items-center gap-x-6 gap-y-3"
             style={{
-              borderTop: "var(--border-width) solid rgba(255,255,255,0.1)",
+              borderTop: "var(--border-width) solid var(--color-border)",
               fontFamily: "var(--font-mono)",
               fontSize: "var(--text-xs)",
-              color: "rgba(232,236,240,0.6)",
+              color: "var(--color-text-muted)",
               letterSpacing: "0.04em",
             }}
           >
             <span>Fundada en 2014</span>
-            <span className="hidden sm:inline-block w-px h-3" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
+            <span className="hidden sm:inline-block w-px h-3" style={{ backgroundColor: "var(--color-border)" }} />
             <span>Estandares ISO</span>
-            <span className="hidden sm:inline-block w-px h-3" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
+            <span className="hidden sm:inline-block w-px h-3" style={{ backgroundColor: "var(--color-border)" }} />
             <span>Certificacion cargoworthy</span>
-            <span className="hidden sm:inline-block w-px h-3" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
+            <span className="hidden sm:inline-block w-px h-3" style={{ backgroundColor: "var(--color-border)" }} />
             <span>Empresa 100% mexicana</span>
           </motion.div>
         </div>
+      </div>
+
+      {/* Block 2: Image with fade-in from dark - 50vh */}
+      <div
+        className="relative"
+        style={{ minHeight: "50dvh" }}
+      >
+        <Image
+          src="/images/client-m1.webp"
+          alt="Fila de contenedores maritimos VAN Contenedores en patio industrial"
+          fill
+          className="object-cover object-center"
+          priority
+          sizes="100vw"
+        />
+        {/* Top gradient that blends into the dark block above */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to bottom, var(--color-bg) 0%, rgba(10,15,20,0.6) 30%, rgba(10,15,20,0.15) 60%, transparent 100%)",
+          }}
+        />
       </div>
     </section>
   );
