@@ -75,9 +75,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error enviando email:", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("SMTP error:", msg, "Host:", process.env.SMTP_HOST, "Port:", process.env.SMTP_PORT, "User:", process.env.SMTP_USER ? "set" : "missing");
     return NextResponse.json(
-      { error: "Error al enviar el correo" },
+      { error: "Error al enviar el correo", detail: msg },
       { status: 500 }
     );
   }
