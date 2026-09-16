@@ -10,6 +10,7 @@ import FAQ from "@/components/FAQ";
 import Gallery from "@/components/Gallery";
 import CTAFinal from "@/components/CTAFinal";
 import Footer from "@/components/Footer";
+import WhatsAppBubble from "@/components/WhatsAppBubble";
 
 export default function Home() {
   return (
@@ -28,6 +29,7 @@ export default function Home() {
         <CTAFinal />
       </main>
       <Footer />
+      <WhatsAppBubble />
     </>
   );
 }
