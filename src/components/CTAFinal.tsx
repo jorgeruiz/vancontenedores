@@ -5,15 +5,25 @@ import { ArrowRight, Phone, Envelope, PaperPlaneTilt } from "@phosphor-icons/rea
 import { motion, useReducedMotion } from "motion/react";
 
 function trackConversion(type: "form_submit" | "whatsapp_click") {
-  if (typeof window !== "undefined" && typeof window.gtag === "function") {
+  if (typeof window === "undefined") return;
+  // GTM dataLayer
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: "cotizador_enviado",
+    form_type: "cotizador_email",
+    conversion_type: type,
+  });
+  // gtag
+  if (typeof window.gtag === "function") {
     window.gtag("event", "conversion", {
       event_category: "lead",
       event_label: type,
       value: 1,
     });
   }
-  if (typeof window !== "undefined" && typeof window.fbq === "function") {
-    window.fbq("track", type === "form_submit" ? "Lead" : "Contact");
+  // fbq
+  if (typeof window.fbq === "function") {
+    window.fbq("track", "Lead");
   }
 }
 
