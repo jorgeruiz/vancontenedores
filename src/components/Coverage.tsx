@@ -5,12 +5,12 @@ import { MapPin } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 
 const CITIES = [
-  { name: "Monterrey", region: "Nuevo Leon" },
-  { name: "Queretaro", region: "Queretaro" },
+  { name: "Monterrey", region: "Nuevo León" },
+  { name: "Querétaro", region: "Querétaro" },
   { name: "Guadalajara", region: "Jalisco" },
-  { name: "San Luis Potosi", region: "SLP" },
+  { name: "San Luis Potosí", region: "SLP" },
   { name: "Altamira", region: "Tamaulipas" },
-  { name: "Merida", region: "Yucatan" },
+  { name: "Mérida", region: "Yucatán" },
 ];
 
 export default function Coverage() {
@@ -48,7 +48,7 @@ export default function Coverage() {
               lineHeight: 1.7,
             }}
           >
-            6 sucursales estrategicas cubriendo las principales zonas industriales de Mexico
+            6 sucursales estratégicas cubriendo las principales zonas industriales de México
           </p>
         </motion.div>
 
@@ -67,7 +67,7 @@ export default function Coverage() {
         >
           <Image
             src="/images/coverage-map.webp"
-            alt="Mapa de Mexico con las 6 ciudades de cobertura de VAN Contenedores"
+            alt="Mapa de México con las 6 ciudades de cobertura de VAN Contenedores"
             fill
             className="object-contain p-4"
             sizes="(max-width: 1024px) 100vw, 1280px"

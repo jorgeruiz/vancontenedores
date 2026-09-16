@@ -41,8 +41,8 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
       `Hola, me interesa rentar un contenedor.\n\n` +
       `Nombre: ${name}\n` +
       `Empresa: ${company || "N/A"}\n` +
-      `Telefono: ${phone}\n` +
-      `Tamano: ${size}\n` +
+      `Teléfono: ${phone}\n` +
+      `Tamaño: ${size}\n` +
       `Uso: ${use}\n` +
       `Ciudad: ${city}`
     );
@@ -104,7 +104,7 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
               }}
             >
               {step === 1
-                ? "Llena la siguiente informacion para ofrecerte un mejor servicio"
+                ? "Llena la siguiente información para ofrecerte un mejor servicio"
                 : "Completa tus datos de contacto"}
             </p>
             <p
@@ -142,7 +142,7 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
                       color: "var(--color-text-dark)",
                     }}
                   >
-                    Tamano del contenedor
+                    Tamaño del contenedor
                   </legend>
                   <div className="grid grid-cols-2 gap-2">
                     {["20 pies", "40 pies"].map((opt) => (
@@ -231,11 +231,11 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
                   >
                     <option value="">Selecciona una ciudad</option>
                     <option>Monterrey</option>
-                    <option>Queretaro</option>
+                    <option>Querétaro</option>
                     <option>Guadalajara</option>
-                    <option>San Luis Potosi</option>
+                    <option>San Luis Potosí</option>
                     <option>Altamira</option>
-                    <option>Merida</option>
+                    <option>Mérida</option>
                     <option>Otra ciudad</option>
                   </select>
                 </div>
@@ -282,7 +282,7 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
                       color: "var(--color-text-dark)",
                     }}
                   >
-                    Telefono *
+                    Teléfono *
                   </label>
                   <input
                     type="tel"
@@ -350,7 +350,7 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
                       letterSpacing: "0.08em",
                     }}
                   >
-                    Tu cotizacion
+                    Tu cotización
                   </p>
                   <p
                     style={{
@@ -388,7 +388,7 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
                   backgroundColor: "transparent",
                 }}
               >
-                Atras
+                Atrás
               </button>
             )}
 

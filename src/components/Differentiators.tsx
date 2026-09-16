@@ -4,9 +4,9 @@ import { motion, useReducedMotion } from "motion/react";
 
 const ITEMS = [
   { value: "24h", label: "Entrega tras completar el proceso de renta", sup: "horas" },
-  { value: "6", label: "Sucursales estrategicas con cobertura nacional", sup: "sucursales" },
-  { value: "12+", label: "Anos de operacion continua desde 2014", sup: "anos" },
-  { value: "600+", label: "Clientes satisfechos en todo Mexico", sup: "clientes" },
+  { value: "6", label: "Sucursales estratégicas con cobertura nacional", sup: "sucursales" },
+  { value: "12+", label: "Años de operación continua desde 2014", sup: "años" },
+  { value: "600+", label: "Clientes satisfechos en todo México", sup: "clientes" },
 ];
 
 export default function Differentiators() {

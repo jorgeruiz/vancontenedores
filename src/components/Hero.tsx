@@ -1,22 +1,68 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ArrowRight, WhatsappLogo } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { useQuote } from "./QuoteProvider";
 
+const CITY_MAP: Record<string, string> = {
+  monterrey: "Monterrey",
+  "san pedro garza garcia": "Monterrey",
+  "santa catarina": "Monterrey",
+  apodaca: "Monterrey",
+  escobedo: "Monterrey",
+  guadalupe: "Monterrey",
+  queretaro: "Querétaro",
+  guadalajara: "Guadalajara",
+  zapopan: "Guadalajara",
+  "san luis potosi": "San Luis Potosí",
+  altamira: "Altamira",
+  tampico: "Altamira",
+  merida: "Mérida",
+};
+
+function useDynamicCity(): string {
+  const [city, setCity] = useState("México");
+
+  useEffect(() => {
+    async function detect() {
+      try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (tz.includes("Monterrey") || tz.includes("Mexico_City")) {
+          // Try geolocation API for more precision
+          const res = await fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(3000) });
+          if (res.ok) {
+            const data = await res.json();
+            const cityName = (data.city || "").toLowerCase();
+            const region = (data.region || "").toLowerCase();
+            const match = CITY_MAP[cityName] || CITY_MAP[region];
+            if (match) setCity(match);
+          }
+        }
+      } catch {
+        // Keep default "México"
+      }
+    }
+    detect();
+  }, []);
+
+  return city;
+}
+
 export default function Hero() {
   const reduce = useReducedMotion();
   const { openQuote } = useQuote();
+  const dynamicCity = useDynamicCity();
 
   return (
     <section id="hero">
-      {/* Block 1: Solid dark background with content - 70vh */}
+      {/* Block 1: Solid dark background with content - shorter */}
       <div
         className="relative flex flex-col justify-center"
         style={{
           backgroundColor: "var(--color-bg)",
-          minHeight: "70dvh",
+          minHeight: "55dvh",
           paddingTop: "5rem",
         }}
       >
@@ -41,14 +87,14 @@ export default function Hero() {
           </motion.span>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-[var(--content-width)] px-[var(--gutter)] w-full py-12 md:py-16">
+        <div className="relative z-10 mx-auto max-w-[var(--content-width)] px-[var(--gutter)] w-full py-10 md:py-14">
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             <div
-              className="inline-flex items-center gap-2 mb-8 px-4 py-2"
+              className="inline-flex items-center gap-2 mb-6 px-4 py-2"
               style={{
                 borderRadius: "var(--radius)",
                 border: "var(--border-width) solid var(--color-border)",
@@ -76,26 +122,26 @@ export default function Hero() {
             initial={reduce ? false : { opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8"
+            className="mb-6"
             style={{
               fontFamily: "var(--font-heading)",
-              fontSize: "clamp(2.75rem, 7vw, 6rem)",
+              fontSize: "clamp(2.25rem, 5.5vw, 4.5rem)",
               fontWeight: 700,
               lineHeight: 0.95,
-              letterSpacing: "-0.04em",
+              letterSpacing: "-0.03em",
               color: "var(--color-text)",
-              maxWidth: "14ch",
+              maxWidth: "18ch",
             }}
           >
-            Renta de Contenedores{" "}
-            <span style={{ color: "var(--color-primary)" }}>Maritimos</span>
+            Renta de Contenedores Marítimos en{" "}
+            <span style={{ color: "var(--color-primary)" }}>{dynamicCity}</span>
           </motion.h1>
 
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col md:flex-row md:items-end gap-8 md:gap-16"
+            className="flex flex-col md:flex-row md:items-end gap-6 md:gap-16"
           >
             <p
               className="max-w-[38ch]"
@@ -123,7 +169,7 @@ export default function Hero() {
                   borderRadius: "var(--radius)",
                 }}
               >
-                Cotiza en linea
+                Cotiza en línea
                 <span
                   className="flex items-center justify-center"
                   style={{
@@ -156,50 +202,27 @@ export default function Hero() {
               </button>
             </div>
           </motion.div>
-
-          <motion.div
-            initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-12 pt-6 flex flex-wrap items-center gap-x-6 gap-y-3"
-            style={{
-              borderTop: "var(--border-width) solid var(--color-border)",
-              fontFamily: "var(--font-mono)",
-              fontSize: "var(--text-xs)",
-              color: "var(--color-text-muted)",
-              letterSpacing: "0.04em",
-            }}
-          >
-            <span>Fundada en 2014</span>
-            <span className="hidden sm:inline-block w-px h-3" style={{ backgroundColor: "var(--color-border)" }} />
-            <span>Estandares ISO</span>
-            <span className="hidden sm:inline-block w-px h-3" style={{ backgroundColor: "var(--color-border)" }} />
-            <span>Certificacion cargoworthy</span>
-            <span className="hidden sm:inline-block w-px h-3" style={{ backgroundColor: "var(--color-border)" }} />
-            <span>Empresa 100% mexicana</span>
-          </motion.div>
         </div>
       </div>
 
-      {/* Block 2: Image with fade-in from dark - 50vh */}
+      {/* Block 2: Image with fade-in from dark - taller */}
       <div
         className="relative"
-        style={{ minHeight: "50dvh" }}
+        style={{ minHeight: "65dvh" }}
       >
         <Image
           src="/images/client-m1.webp"
-          alt="Fila de contenedores maritimos VAN Contenedores en patio industrial"
+          alt="Fila de contenedores marítimos VAN Contenedores en patio industrial"
           fill
           className="object-cover object-center"
           priority
           sizes="100vw"
         />
-        {/* Top gradient that blends into the dark block above */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "linear-gradient(to bottom, var(--color-bg) 0%, rgba(10,15,20,0.6) 30%, rgba(10,15,20,0.15) 60%, transparent 100%)",
+              "linear-gradient(to bottom, var(--color-bg) 0%, rgba(10,15,20,0.6) 25%, rgba(10,15,20,0.15) 55%, transparent 100%)",
           }}
         />
       </div>

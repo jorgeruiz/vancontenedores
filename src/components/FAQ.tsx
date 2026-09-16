@@ -6,36 +6,36 @@ import { motion, useReducedMotion, AnimatePresence } from "motion/react";
 
 const FAQS = [
   {
-    q: "Para que sirve rentar un contenedor maritimo en una obra?",
-    a: "Un contenedor maritimo rentado funciona como bodega temporal en sitio para guardar herramientas, materiales de construccion, maquinaria, documentos y mobiliario directamente en la obra, sin necesidad de construir un cuarto de bodega permanente.",
+    q: "¿Para qué sirve rentar un contenedor marítimo en una obra?",
+    a: "Un contenedor marítimo rentado funciona como bodega temporal en sitio para guardar herramientas, materiales de construcción, maquinaria, documentos y mobiliario directamente en la obra, sin necesidad de construir un cuarto de bodega permanente.",
   },
   {
-    q: "Cuanto tardan en entregar el contenedor?",
-    a: "VAN Contenedores entrega el contenedor en menos de 24 horas despues de completar el proceso de renta. La cotizacion se genera de forma inmediata tras el primer contacto.",
+    q: "¿Cuánto tardan en entregar el contenedor?",
+    a: "VAN Contenedores entrega el contenedor en menos de 24 horas después de completar el proceso de renta. La cotización se genera de forma inmediata tras el primer contacto.",
   },
   {
-    q: "Que tamanos de contenedores estan disponibles?",
+    q: "¿Qué tamaños de contenedores están disponibles?",
     a: "Rentamos contenedores de 10, 20 y 40 pies. El de 20 pies mide 6.09 m x 2.44 m x 2.60 m de alto; el de 40 pies mide 12.19 m x 2.44 m x 2.60 m.",
   },
   {
-    q: "Cual es el tiempo minimo de renta?",
-    a: "El tiempo minimo de renta es un mes. Si el proyecto requiere menos tiempo, evaluamos soluciones caso por caso.",
+    q: "¿Cuál es el tiempo mínimo de renta?",
+    a: "El tiempo mínimo de renta es un mes. Si el proyecto requiere menos tiempo, evaluamos soluciones caso por caso.",
   },
   {
-    q: "Que documentos se necesitan para rentar?",
-    a: "Identificacion oficial, constancia de situacion fiscal, comprobante de domicilio, y acta constitutiva en caso de persona moral.",
+    q: "¿Qué documentos se necesitan para rentar?",
+    a: "Identificación oficial, constancia de situación fiscal, comprobante de domicilio, y acta constitutiva en caso de persona moral.",
   },
   {
-    q: "El contenedor es seguro para guardar material de valor?",
-    a: "Si. Acero de alta resistencia con estandares ISO y certificacion cargoworthy. Cierre reforzado, estructura practicamente inviolable sin equipo especializado.",
+    q: "¿El contenedor es seguro para guardar material de valor?",
+    a: "Sí. Acero de alta resistencia con estándares ISO y certificación cargoworthy. Cierre reforzado, estructura prácticamente inviolable sin equipo especializado.",
   },
   {
-    q: "En que ciudades entregan?",
-    a: "Cobertura nacional: Monterrey, Veracruz, Altamira, Merida, Tijuana, Queretaro, San Luis Potosi y Guadalajara.",
+    q: "¿En qué ciudades entregan?",
+    a: "Cobertura nacional: Monterrey, Altamira, Mérida, Querétaro, San Luis Potosí y Guadalajara.",
   },
   {
-    q: "Se puede rentar para transporte ademas de almacenaje?",
-    a: "Si. Rentamos para almacenaje temporal y transporte de mercancias. Certificacion cargoworthy habilitada para rutas nacionales.",
+    q: "¿Se puede rentar para transporte además de almacenaje?",
+    a: "Sí. Rentamos para almacenaje temporal y transporte de mercancías. Certificación cargoworthy habilitada para rutas nacionales.",
   },
 ];
 
@@ -179,7 +179,7 @@ export default function FAQ() {
                   lineHeight: 1.7,
                 }}
               >
-                Todo lo que necesitas saber sobre la renta de contenedores maritimos.
+                Todo lo que necesitas saber sobre la renta de contenedores marítimos.
               </motion.p>
             </div>
           </div>

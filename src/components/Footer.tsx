@@ -34,7 +34,7 @@ export default function Footer() {
                 lineHeight: 1.7,
               }}
             >
-              Empresa mexicana fundada en 2014. Renta de contenedores maritimos para almacenaje temporal y transporte con cobertura nacional.
+              Empresa mexicana fundada en 2014. Renta de contenedores marítimos para almacenaje temporal y transporte con cobertura nacional.
             </p>
             <p
               style={{
@@ -59,7 +59,7 @@ export default function Footer() {
                 letterSpacing: "0.1em",
               }}
             >
-              Navegacion
+              Navegación
             </p>
             <nav className="flex flex-col gap-2">
               {NAV_LINKS.map((link) => (
@@ -123,7 +123,7 @@ export default function Footer() {
                   marginTop: "0.5rem",
                 }}
               >
-                Monterrey, Nuevo Leon, Mexico
+                Monterrey, Nuevo León, México
               </p>
             </div>
 
@@ -137,7 +137,7 @@ export default function Footer() {
                 marginTop: "0.5rem",
               }}
             >
-              Cobertura: Monterrey, Queretaro, Guadalajara, San Luis Potosi, Altamira, Merida
+              Cobertura: Monterrey, Querétaro, Guadalajara, San Luis Potosí, Altamira, Mérida
             </p>
           </div>
         </div>

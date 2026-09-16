@@ -13,11 +13,11 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Renta de Contenedores Maritimos en Monterrey | VAN Contenedores",
+  title: "Renta de Contenedores Marítimos en Monterrey | VAN Contenedores",
   description:
-    "Renta de contenedores maritimos de 20 y 40 pies para almacenaje temporal y transporte. Entrega en menos de 24 horas. Cobertura nacional desde 6 sucursales.",
+    "Renta de contenedores marítimos de 20 y 40 pies para almacenaje temporal y transporte. Entrega en menos de 24 horas. Cobertura nacional desde 6 sucursales.",
   openGraph: {
-    title: "Renta de Contenedores Maritimos | VAN Contenedores",
+    title: "Renta de Contenedores Marítimos | VAN Contenedores",
     description:
       "Almacenaje temporal en sitio con entrega en menos de 24 horas. Contenedores de 20 y 40 pies con cobertura nacional.",
     url: "https://vancontenedores.com/",

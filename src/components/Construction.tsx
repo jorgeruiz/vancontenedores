@@ -5,10 +5,10 @@ import { CheckCircle } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 
 const BENEFITS = [
-  "Se instala directo en tu obra, sin construccion permanente",
+  "Se instala directo en tu obra, sin construcción permanente",
   "Acero de alta resistencia con cierre reforzado",
   "Protege herramientas, materiales y maquinaria",
-  "Renta mensual sin inversion en infraestructura fija",
+  "Renta mensual sin inversión en infraestructura fija",
 ];
 
 export default function Construction() {
@@ -36,7 +36,7 @@ export default function Construction() {
           >
             <Image
               src="/images/client-f1.webp"
-              alt="Contenedor maritimo abierto en obra de construccion con materiales almacenados"
+              alt="Contenedor marítimo abierto en obra de construcción con materiales almacenados"
               fill
               className="object-cover"
               sizes="100vw"
@@ -70,7 +70,7 @@ export default function Construction() {
                     lineHeight: 1.7,
                   }}
                 >
-                  Bodega temporal en sitio para guardar herramientas, materiales de construccion, maquinaria y documentos directamente en la obra.
+                  Bodega temporal en sitio para guardar herramientas, materiales de construcción, maquinaria y documentos directamente en la obra.
                 </p>
                 <a
                   href="#contacto"

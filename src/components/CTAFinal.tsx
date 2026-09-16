@@ -36,12 +36,12 @@ export default function CTAFinal() {
 
     trackConversion("form_submit");
 
-    const subject = encodeURIComponent(`Cotizacion - ${name} - ${size} - ${city}`);
+    const subject = encodeURIComponent(`Cotización - ${name} - ${size} - ${city}`);
     const body = encodeURIComponent(
       `Nombre: ${name}\n` +
       `Empresa: ${company || "N/A"}\n` +
-      `Telefono: ${phone}\n` +
-      `Tamano: ${size}\n` +
+      `Teléfono: ${phone}\n` +
+      `Tamaño: ${size}\n` +
       `Uso: ${use}\n` +
       `Ciudad: ${city}`
     );
@@ -98,8 +98,8 @@ export default function CTAFinal() {
                   letterSpacing: "-0.03em",
                 }}
               >
-                Cotiza en linea y recibe tu contenedor{" "}
-                <span style={{ color: "var(--color-primary)" }}>manana</span>
+                Cotiza en línea y recibe tu contenedor{" "}
+                <span style={{ color: "var(--color-primary)" }}>mañana</span>
               </h2>
 
               <p
@@ -111,7 +111,7 @@ export default function CTAFinal() {
                   lineHeight: 1.7,
                 }}
               >
-                Llena el formulario y te contactamos por WhatsApp con tu cotizacion inmediata. Entrega en menos de 24 horas.
+                Llena el formulario y te contactamos por WhatsApp con tu cotización inmediata. Entrega en menos de 24 horas.
               </p>
 
               <div className="flex flex-col gap-3">
@@ -170,13 +170,13 @@ export default function CTAFinal() {
                   letterSpacing: "var(--heading-tracking)",
                 }}
               >
-                Configura tu cotizacion
+                Configura tu cotización
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
                 {/* Size */}
                 <div>
-                  <label style={labelStyle}>Tamano del contenedor</label>
+                  <label style={labelStyle}>Tamaño del contenedor</label>
                   <div className="grid grid-cols-2 gap-2">
                     {["20 pies", "40 pies"].map((opt) => (
                       <button
@@ -234,11 +234,11 @@ export default function CTAFinal() {
                   <select value={city} onChange={(e) => setCity(e.target.value)} style={inputStyle}>
                     <option value="">Selecciona</option>
                     <option>Monterrey</option>
-                    <option>Queretaro</option>
+                    <option>Querétaro</option>
                     <option>Guadalajara</option>
-                    <option>San Luis Potosi</option>
+                    <option>San Luis Potosí</option>
                     <option>Altamira</option>
-                    <option>Merida</option>
+                    <option>Mérida</option>
                     <option>Otra ciudad</option>
                   </select>
                 </div>
@@ -270,7 +270,7 @@ export default function CTAFinal() {
 
                 {/* Phone */}
                 <div>
-                  <label style={labelStyle}>Telefono *</label>
+                  <label style={labelStyle}>Teléfono *</label>
                   <input
                     type="tel"
                     required
@@ -297,8 +297,8 @@ export default function CTAFinal() {
                   }}
                 >
                   {submitted
-                    ? "Solicitud enviada. Nuestro equipo te contactara en breve."
-                    : "Te enviaremos tu cotizacion por correo electronico."}
+                    ? "Solicitud enviada. Nuestro equipo te contactará en breve."
+                    : "Te enviaremos tu cotización por correo electrónico."}
                 </p>
                 <button
                   type="submit"
@@ -316,7 +316,7 @@ export default function CTAFinal() {
                   }}
                 >
                   <PaperPlaneTilt size={18} weight="fill" />
-                  Enviar cotizacion
+                  Enviar cotización
                   <ArrowRight size={14} weight="bold" />
                 </button>
               </div>

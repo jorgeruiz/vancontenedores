@@ -182,7 +182,7 @@ export default function ContainerSelector() {
               >
                 <Image
                   src={container.image}
-                  alt={`Contenedor maritimo de ${container.label}`}
+                  alt={`Contenedor marítimo de ${container.label}`}
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -203,7 +203,7 @@ export default function ContainerSelector() {
                 border: "var(--border-width) solid var(--color-border)",
               }}
               role="tablist"
-              aria-label="Tamano de contenedor"
+              aria-label="Tamaño de contenedor"
             >
               {CONTAINERS.map((container, i) => (
                 <button
