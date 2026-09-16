@@ -25,8 +25,10 @@ export default function CTAFinal() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
+  const [interest, setInterest] = useState("");
+  const [message, setMessage] = useState("");
 
-  const allFilled = size && use && city && name && phone;
+  const allFilled = size && use && city && name && phone && interest;
 
   const [submitted, setSubmitted] = useState(false);
 
@@ -41,9 +43,11 @@ export default function CTAFinal() {
       `Nombre: ${name}\n` +
       `Empresa: ${company || "N/A"}\n` +
       `Teléfono: ${phone}\n` +
+      `Me interesa: ${interest}\n` +
       `Tamaño: ${size}\n` +
       `Uso: ${use}\n` +
-      `Ciudad: ${city}`
+      `Ciudad: ${city}\n` +
+      `Mensaje: ${message || "N/A"}`
     );
 
     window.location.href = `mailto:ventas@vancontenedores.com?subject=${subject}&body=${body}`;
@@ -228,6 +232,33 @@ export default function CTAFinal() {
                   </div>
                 </div>
 
+                {/* Interest */}
+                <div>
+                  <label style={labelStyle}>Me interesa</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {["Comprar", "Rentar"].map((opt) => (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => setInterest(opt)}
+                        className="py-3 px-4 text-center transition-colors"
+                        style={{
+                          borderRadius: "var(--radius)",
+                          border: `2px solid ${interest === opt ? "var(--color-primary)" : "var(--color-border-light)"}`,
+                          backgroundColor: interest === opt ? "rgba(36,122,76,0.08)" : "var(--color-surface-light)",
+                          fontFamily: "var(--font-body)",
+                          fontSize: "var(--text-sm)",
+                          fontWeight: 600,
+                          color: interest === opt ? "var(--color-primary)" : "var(--color-text-dark)",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* City */}
                 <div>
                   <label style={labelStyle}>Ciudad de entrega</label>
@@ -280,9 +311,24 @@ export default function CTAFinal() {
                     style={inputStyle}
                   />
                 </div>
+
+                {/* Message - full width */}
+                <div className="md:col-span-2">
+                  <label style={labelStyle}>Mensaje adicional (opcional)</label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Cuéntanos más sobre lo que necesitas..."
+                    rows={3}
+                    style={{
+                      ...inputStyle,
+                      resize: "vertical" as const,
+                    }}
+                  />
+                </div>
               </div>
 
-              {/* WhatsApp notice + submit */}
+              {/* Submit */}
               <div
                 className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-5"
                 style={{ borderTop: "var(--border-width) solid var(--color-border-light)" }}
