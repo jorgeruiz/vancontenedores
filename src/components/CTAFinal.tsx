@@ -32,26 +32,32 @@ export default function CTAFinal() {
 
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!allFilled) return;
+  const [sending, setSending] = useState(false);
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!allFilled || sending) return;
+
+    setSending(true);
     trackConversion("form_submit");
 
-    const subject = encodeURIComponent(`Cotización - ${name} - ${size} - ${city}`);
-    const body = encodeURIComponent(
-      `Nombre: ${name}\n` +
-      `Empresa: ${company || "N/A"}\n` +
-      `Teléfono: ${phone}\n` +
-      `Me interesa: ${interest}\n` +
-      `Tamaño: ${size}\n` +
-      `Uso: ${use}\n` +
-      `Ciudad: ${city}\n` +
-      `Mensaje: ${message || "N/A"}`
-    );
+    try {
+      const res = await fetch("/api/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone, company, size, use, city, interest, message }),
+      });
 
-    window.location.href = `mailto:ventas@vancontenedores.com?subject=${subject}&body=${body}`;
-    setSubmitted(true);
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        alert("Error al enviar. Intenta de nuevo o llámanos al (81) 8469 2252.");
+      }
+    } catch {
+      alert("Error de conexión. Intenta de nuevo o llámanos al (81) 8469 2252.");
+    } finally {
+      setSending(false);
+    }
   };
 
   const inputStyle = {
@@ -348,22 +354,22 @@ export default function CTAFinal() {
                 </p>
                 <button
                   type="submit"
-                  disabled={!allFilled}
+                  disabled={!allFilled || sending || submitted}
                   className="shrink-0 inline-flex items-center gap-2 transition-transform active:scale-[0.98]"
                   style={{
-                    backgroundColor: allFilled ? "var(--color-primary)" : "var(--color-border-light)",
-                    color: allFilled ? "var(--color-on-primary)" : "var(--color-text-muted-dark)",
+                    backgroundColor: submitted ? "var(--color-primary)" : allFilled && !sending ? "var(--color-primary)" : "var(--color-border-light)",
+                    color: allFilled || submitted ? "var(--color-on-primary)" : "var(--color-text-muted-dark)",
                     fontFamily: "var(--font-body)",
                     fontSize: "var(--text-base)",
                     fontWeight: 600,
                     padding: "0.875rem 2rem",
                     borderRadius: "var(--radius)",
-                    cursor: allFilled ? "pointer" : "not-allowed",
+                    cursor: allFilled && !sending && !submitted ? "pointer" : "not-allowed",
                   }}
                 >
                   <PaperPlaneTilt size={18} weight="fill" />
-                  Enviar cotización
-                  <ArrowRight size={14} weight="bold" />
+                  {submitted ? "Enviado" : sending ? "Enviando..." : "Enviar cotización"}
+                  {!submitted && !sending && <ArrowRight size={14} weight="bold" />}
                 </button>
               </div>
             </form>
