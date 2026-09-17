@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
@@ -24,76 +24,82 @@ const PHOTOS = [
   { src: "/images/client-img-20250818-wa0019.webp", alt: "Contenedor dentro de nave industrial con montacargas" },
 ];
 
-const AUTO_SCROLL_INTERVAL = 4000;
-const AUTO_SCROLL_AMOUNT = 400;
+const CARD_WIDTH = 380;
+const GAP = 16;
+const AUTO_INTERVAL = 4000;
+const RESUME_DELAY = 6000;
 
 export default function Gallery() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  const [isPaused, setIsPaused] = useState(false);
-  const isDragging = useRef(false);
-  const dragStartX = useRef(0);
-  const dragScrollLeft = useRef(0);
+  const pauseUntil = useRef(0);
+  const dragState = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
 
-  const scroll = (dir: "left" | "right") => {
-    if (!scrollRef.current) return;
-    const amount = scrollRef.current.offsetWidth * 0.7;
-    scrollRef.current.scrollBy({
-      left: dir === "left" ? -amount : amount,
-      behavior: reduce ? "auto" : "smooth",
-    });
-  };
+  // Pause auto-scroll for a duration after any user interaction
+  const pauseAutoScroll = useCallback(() => {
+    pauseUntil.current = Date.now() + RESUME_DELAY;
+  }, []);
 
-  // Auto-scroll
+  // Scroll by one card in a direction
+  const scroll = useCallback((dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    pauseAutoScroll();
+    const step = CARD_WIDTH + GAP;
+    el.scrollBy({ left: dir === "left" ? -step : step, behavior: "smooth" });
+  }, [pauseAutoScroll]);
+
+  // Auto-scroll: advance one card, loop to start
   useEffect(() => {
-    if (reduce || isPaused) return;
+    if (reduce) return;
     const el = scrollRef.current;
     if (!el) return;
 
     const timer = setInterval(() => {
+      if (Date.now() < pauseUntil.current) return;
       const maxScroll = el.scrollWidth - el.clientWidth;
       if (el.scrollLeft >= maxScroll - 10) {
         el.scrollTo({ left: 0, behavior: "smooth" });
       } else {
-        el.scrollBy({ left: AUTO_SCROLL_AMOUNT, behavior: "smooth" });
+        el.scrollBy({ left: CARD_WIDTH + GAP, behavior: "smooth" });
       }
-    }, AUTO_SCROLL_INTERVAL);
+    }, AUTO_INTERVAL);
 
     return () => clearInterval(timer);
-  }, [reduce, isPaused]);
+  }, [reduce]);
 
-  // Pause on hover / touch
-  const pause = useCallback(() => setIsPaused(true), []);
-  const resume = useCallback(() => setIsPaused(false), []);
-
-  // Drag to scroll
-  const onPointerDown = useCallback((e: React.PointerEvent) => {
+  // Mouse drag (desktop only — touch uses native scroll)
+  const onMouseDown = useCallback((e: React.MouseEvent) => {
     const el = scrollRef.current;
     if (!el) return;
-    isDragging.current = true;
-    dragStartX.current = e.clientX;
-    dragScrollLeft.current = el.scrollLeft;
-    el.setPointerCapture(e.pointerId);
+    dragState.current = { active: true, startX: e.clientX, scrollLeft: el.scrollLeft, moved: false };
     el.style.cursor = "grabbing";
-    setIsPaused(true);
+    el.style.scrollSnapType = "none";
+    pauseAutoScroll();
+  }, [pauseAutoScroll]);
+
+  const onMouseMove = useCallback((e: React.MouseEvent) => {
+    const d = dragState.current;
+    if (!d.active || !scrollRef.current) return;
+    const dx = e.clientX - d.startX;
+    if (Math.abs(dx) > 3) d.moved = true;
+    scrollRef.current.scrollLeft = d.scrollLeft - dx;
   }, []);
 
-  const onPointerMove = useCallback((e: React.PointerEvent) => {
-    if (!isDragging.current || !scrollRef.current) return;
-    const dx = e.clientX - dragStartX.current;
-    scrollRef.current.scrollLeft = dragScrollLeft.current - dx;
-  }, []);
-
-  const onPointerUp = useCallback((e: React.PointerEvent) => {
-    if (!isDragging.current) return;
-    isDragging.current = false;
+  const onMouseUp = useCallback(() => {
+    if (!dragState.current.active) return;
+    dragState.current.active = false;
     const el = scrollRef.current;
-    if (el) {
-      el.releasePointerCapture(e.pointerId);
-      el.style.cursor = "grab";
-    }
-    setTimeout(() => setIsPaused(false), 2000);
+    if (!el) return;
+    el.style.cursor = "grab";
+    // Re-enable snap after a tick so it settles to nearest card
+    requestAnimationFrame(() => {
+      el.style.scrollSnapType = "x mandatory";
+    });
   }, []);
+
+  // Pause auto-scroll on touch interaction
+  const onTouchStart = useCallback(() => pauseAutoScroll(), [pauseAutoScroll]);
 
   return (
     <section
@@ -161,15 +167,13 @@ export default function Gallery() {
           scrollSnapType: "x mandatory",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
-          WebkitOverflowScrolling: "touch",
           cursor: "grab",
         }}
-        onMouseEnter={pause}
-        onMouseLeave={resume}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}
+        onTouchStart={onTouchStart}
       >
         {/* Left spacer for max-width alignment */}
         <div className="shrink-0" style={{ width: "max(0px, calc((100vw - var(--content-width)) / 2 - var(--gutter)))" }} />
@@ -185,12 +189,13 @@ export default function Gallery() {
               delay: i * 0.03,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className="relative shrink-0 aspect-[3/2] overflow-hidden pointer-events-none"
+            className="relative shrink-0 aspect-[3/2] overflow-hidden"
             style={{
               width: "min(380px, 75vw)",
               borderRadius: "var(--radius)",
               border: "var(--border-width) solid var(--color-border)",
               scrollSnapAlign: "start",
+              pointerEvents: "none",
             }}
           >
             <Image
