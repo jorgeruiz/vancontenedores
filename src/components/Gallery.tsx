@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import Image from "next/image";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
@@ -24,9 +24,16 @@ const PHOTOS = [
   { src: "/images/client-img-20250818-wa0019.webp", alt: "Contenedor dentro de nave industrial con montacargas" },
 ];
 
+const AUTO_SCROLL_INTERVAL = 4000;
+const AUTO_SCROLL_AMOUNT = 400;
+
 export default function Gallery() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const [isPaused, setIsPaused] = useState(false);
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
+  const dragScrollLeft = useRef(0);
 
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -36,6 +43,57 @@ export default function Gallery() {
       behavior: reduce ? "auto" : "smooth",
     });
   };
+
+  // Auto-scroll
+  useEffect(() => {
+    if (reduce || isPaused) return;
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const timer = setInterval(() => {
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (el.scrollLeft >= maxScroll - 10) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: AUTO_SCROLL_AMOUNT, behavior: "smooth" });
+      }
+    }, AUTO_SCROLL_INTERVAL);
+
+    return () => clearInterval(timer);
+  }, [reduce, isPaused]);
+
+  // Pause on hover / touch
+  const pause = useCallback(() => setIsPaused(true), []);
+  const resume = useCallback(() => setIsPaused(false), []);
+
+  // Drag to scroll
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    isDragging.current = true;
+    dragStartX.current = e.clientX;
+    dragScrollLeft.current = el.scrollLeft;
+    el.setPointerCapture(e.pointerId);
+    el.style.cursor = "grabbing";
+    setIsPaused(true);
+  }, []);
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isDragging.current || !scrollRef.current) return;
+    const dx = e.clientX - dragStartX.current;
+    scrollRef.current.scrollLeft = dragScrollLeft.current - dx;
+  }, []);
+
+  const onPointerUp = useCallback((e: React.PointerEvent) => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    const el = scrollRef.current;
+    if (el) {
+      el.releasePointerCapture(e.pointerId);
+      el.style.cursor = "grab";
+    }
+    setTimeout(() => setIsPaused(false), 2000);
+  }, []);
 
   return (
     <section
@@ -98,13 +156,20 @@ export default function Gallery() {
       {/* Carousel */}
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto px-[var(--gutter)] pb-4"
+        className="flex gap-4 overflow-x-auto px-[var(--gutter)] pb-4 select-none"
         style={{
           scrollSnapType: "x mandatory",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
           WebkitOverflowScrolling: "touch",
+          cursor: "grab",
         }}
+        onMouseEnter={pause}
+        onMouseLeave={resume}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
       >
         {/* Left spacer for max-width alignment */}
         <div className="shrink-0" style={{ width: "max(0px, calc((100vw - var(--content-width)) / 2 - var(--gutter)))" }} />
@@ -120,7 +185,7 @@ export default function Gallery() {
               delay: i * 0.03,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className="relative shrink-0 aspect-[3/2] overflow-hidden"
+            className="relative shrink-0 aspect-[3/2] overflow-hidden pointer-events-none"
             style={{
               width: "min(380px, 75vw)",
               borderRadius: "var(--radius)",
@@ -134,6 +199,7 @@ export default function Gallery() {
               fill
               className="object-cover"
               sizes="380px"
+              draggable={false}
             />
           </motion.div>
         ))}
