@@ -24,81 +24,73 @@ const PHOTOS = [
   { src: "/images/client-img-20250818-wa0019.webp", alt: "Contenedor dentro de nave industrial con montacargas" },
 ];
 
-const CARD_WIDTH = 380;
-const GAP = 16;
-const AUTO_INTERVAL = 4000;
-const RESUME_DELAY = 6000;
+const SPEED = 0.5; // px per frame
+const RESUME_DELAY = 4000;
 
 export default function Gallery() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const pauseUntil = useRef(0);
-  const dragState = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
+  const rafId = useRef(0);
+  const dragState = useRef({ active: false, startX: 0, scrollLeft: 0 });
 
-  // Pause auto-scroll for a duration after any user interaction
   const pauseAutoScroll = useCallback(() => {
     pauseUntil.current = Date.now() + RESUME_DELAY;
   }, []);
 
-  // Scroll by one card in a direction
   const scroll = useCallback((dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
     pauseAutoScroll();
-    const step = CARD_WIDTH + GAP;
+    const step = el.offsetWidth * 0.7;
     el.scrollBy({ left: dir === "left" ? -step : step, behavior: "smooth" });
   }, [pauseAutoScroll]);
 
-  // Auto-scroll: advance one card, loop to start
+  // Continuous auto-scroll via requestAnimationFrame
   useEffect(() => {
     if (reduce) return;
     const el = scrollRef.current;
     if (!el) return;
 
-    const timer = setInterval(() => {
-      if (Date.now() < pauseUntil.current) return;
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      if (el.scrollLeft >= maxScroll - 10) {
-        el.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        el.scrollBy({ left: CARD_WIDTH + GAP, behavior: "smooth" });
+    const tick = () => {
+      if (Date.now() >= pauseUntil.current && !dragState.current.active) {
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        if (el.scrollLeft >= maxScroll - 1) {
+          el.scrollLeft = 0;
+        } else {
+          el.scrollLeft += SPEED;
+        }
       }
-    }, AUTO_INTERVAL);
+      rafId.current = requestAnimationFrame(tick);
+    };
+    rafId.current = requestAnimationFrame(tick);
 
-    return () => clearInterval(timer);
+    return () => cancelAnimationFrame(rafId.current);
   }, [reduce]);
 
   // Mouse drag (desktop only — touch uses native scroll)
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     const el = scrollRef.current;
     if (!el) return;
-    dragState.current = { active: true, startX: e.clientX, scrollLeft: el.scrollLeft, moved: false };
+    dragState.current = { active: true, startX: e.clientX, scrollLeft: el.scrollLeft };
     el.style.cursor = "grabbing";
-    el.style.scrollSnapType = "none";
     pauseAutoScroll();
   }, [pauseAutoScroll]);
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
     const d = dragState.current;
     if (!d.active || !scrollRef.current) return;
-    const dx = e.clientX - d.startX;
-    if (Math.abs(dx) > 3) d.moved = true;
-    scrollRef.current.scrollLeft = d.scrollLeft - dx;
+    scrollRef.current.scrollLeft = d.scrollLeft - (e.clientX - d.startX);
   }, []);
 
   const onMouseUp = useCallback(() => {
     if (!dragState.current.active) return;
     dragState.current.active = false;
     const el = scrollRef.current;
-    if (!el) return;
-    el.style.cursor = "grab";
-    // Re-enable snap after a tick so it settles to nearest card
-    requestAnimationFrame(() => {
-      el.style.scrollSnapType = "x mandatory";
-    });
-  }, []);
+    if (el) el.style.cursor = "grab";
+    pauseAutoScroll();
+  }, [pauseAutoScroll]);
 
-  // Pause auto-scroll on touch interaction
   const onTouchStart = useCallback(() => pauseAutoScroll(), [pauseAutoScroll]);
 
   return (
@@ -164,7 +156,6 @@ export default function Gallery() {
         ref={scrollRef}
         className="flex gap-4 overflow-x-auto px-[var(--gutter)] pb-4 select-none"
         style={{
-          scrollSnapType: "x mandatory",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
           cursor: "grab",
@@ -194,7 +185,6 @@ export default function Gallery() {
               width: "min(380px, 75vw)",
               borderRadius: "var(--radius)",
               border: "var(--border-width) solid var(--color-border)",
-              scrollSnapAlign: "start",
               pointerEvents: "none",
             }}
           >
