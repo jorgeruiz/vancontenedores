@@ -1,27 +1,20 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { ArrowRight, Phone, Envelope, PaperPlaneTilt } from "@phosphor-icons/react";
+import { ArrowRight, Phone, Envelope, PaperPlaneTilt, ArrowLeft } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 
 function trackConversion(type: "form_submit" | "whatsapp_click") {
   if (typeof window === "undefined") return;
-  // GTM dataLayer
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
     event: "cotizador_enviado",
     form_type: "cotizador_email",
     conversion_type: type,
   });
-  // gtag
   if (typeof window.gtag === "function") {
-    window.gtag("event", "conversion", {
-      event_category: "lead",
-      event_label: type,
-      value: 1,
-    });
+    window.gtag("event", "conversion", { event_category: "lead", event_label: type, value: 1 });
   }
-  // fbq
   if (typeof window.fbq === "function") {
     window.fbq("track", "Lead");
   }
@@ -29,24 +22,23 @@ function trackConversion(type: "form_submit" | "whatsapp_click") {
 
 export default function CTAFinal() {
   const reduce = useReducedMotion();
+  const [step, setStep] = useState(1);
+  const [interest, setInterest] = useState("");
   const [size, setSize] = useState("");
-  const [use, setUse] = useState("");
   const [city, setCity] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
-  const [interest, setInterest] = useState("");
   const [message, setMessage] = useState("");
-
-  const allFilled = size && use && city && name && phone && interest;
-
+  const [sending, setSending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const [sending, setSending] = useState(false);
+  const step1Valid = interest && size && city;
+  const step2Valid = name && phone;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!allFilled || sending) return;
+    if (!step2Valid || sending) return;
 
     setSending(true);
     trackConversion("form_submit");
@@ -55,9 +47,8 @@ export default function CTAFinal() {
       const res = await fetch("/api/quote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, company, size, use, city, interest, message }),
+        body: JSON.stringify({ name, phone, company, size, use: "-", city, interest, message }),
       });
-
       if (res.ok) {
         setSubmitted(true);
       } else {
@@ -86,9 +77,22 @@ export default function CTAFinal() {
     fontSize: "var(--text-xs)",
     fontWeight: 600,
     color: "var(--color-text-dark)",
-    marginBottom: "0.375rem",
+    marginBottom: "0.5rem",
     display: "block",
   } as const;
+
+  const optionBtn = (selected: boolean) => ({
+    borderRadius: "var(--radius)",
+    border: `2px solid ${selected ? "var(--color-primary)" : "var(--color-border-light)"}`,
+    backgroundColor: selected ? "rgba(36,122,76,0.08)" : "var(--color-surface-light)",
+    fontFamily: "var(--font-body)",
+    fontSize: "var(--text-sm)",
+    fontWeight: 600,
+    color: selected ? "var(--color-primary)" : "var(--color-text-dark)",
+    cursor: "pointer" as const,
+    padding: "0.75rem 1rem",
+    textAlign: "center" as const,
+  });
 
   return (
     <section
@@ -121,7 +125,6 @@ export default function CTAFinal() {
                 Cotiza en línea y recibe tu contenedor{" "}
                 <span style={{ color: "var(--color-primary)" }}>mañana</span>
               </h2>
-
               <p
                 className="mb-8 max-w-[40ch]"
                 style={{
@@ -131,18 +134,13 @@ export default function CTAFinal() {
                   lineHeight: 1.7,
                 }}
               >
-                Llena el formulario y te contactamos por WhatsApp con tu cotización inmediata. Entrega en menos de 24 horas.
+                Llena el formulario y nuestro equipo te contactará con tu cotización. Entrega en menos de 24 horas.
               </p>
-
               <div className="flex flex-col gap-3">
                 <a
                   href="tel:+528184692252"
                   className="inline-flex items-center gap-3"
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "var(--text-sm)",
-                    color: "var(--color-text-dark)",
-                  }}
+                  style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", color: "var(--color-text-dark)" }}
                 >
                   <Phone size={18} weight="bold" style={{ color: "var(--color-primary)" }} />
                   (81) 8469 2252
@@ -150,11 +148,7 @@ export default function CTAFinal() {
                 <a
                   href="mailto:ventas@vancontenedores.com"
                   className="inline-flex items-center gap-3"
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-sm)",
-                    color: "var(--color-text-muted-dark)",
-                  }}
+                  style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-muted-dark)" }}
                 >
                   <Envelope size={18} weight="regular" style={{ color: "var(--color-primary)" }} />
                   ventas@vancontenedores.com
@@ -163,7 +157,7 @@ export default function CTAFinal() {
             </div>
           </motion.div>
 
-          {/* Right: inline quote form */}
+          {/* Right: multi-step form */}
           <motion.div
             className="lg:col-span-7"
             initial={reduce ? false : { opacity: 0, y: 20 }}
@@ -171,8 +165,7 @@ export default function CTAFinal() {
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <form
-              onSubmit={handleSubmit}
+            <div
               className="p-6 md:p-8"
               style={{
                 backgroundColor: "var(--color-surface-light)",
@@ -180,209 +173,196 @@ export default function CTAFinal() {
                 border: "var(--border-width) solid var(--color-border-light)",
               }}
             >
-              <p
-                className="mb-6"
-                style={{
-                  fontFamily: "var(--font-heading)",
-                  fontSize: "var(--text-lg)",
-                  fontWeight: 700,
-                  color: "var(--color-text-dark)",
-                  letterSpacing: "var(--heading-tracking)",
-                }}
-              >
-                Configura tu cotización
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-                {/* Size */}
-                <div>
-                  <label style={labelStyle}>Tamaño del contenedor</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["20 pies", "40 pies"].map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setSize(opt)}
-                        className="py-3 px-4 text-center transition-colors"
-                        style={{
-                          borderRadius: "var(--radius)",
-                          border: `2px solid ${size === opt ? "var(--color-primary)" : "var(--color-border-light)"}`,
-                          backgroundColor: size === opt ? "rgba(36,122,76,0.08)" : "var(--color-surface-light)",
-                          fontFamily: "var(--font-mono)",
-                          fontSize: "var(--text-sm)",
-                          fontWeight: 600,
-                          color: size === opt ? "var(--color-primary)" : "var(--color-text-dark)",
-                          cursor: "pointer",
-                        }}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Use */}
-                <div>
-                  <label style={labelStyle}>Uso principal</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["Almacenaje en obra", "Bodega temporal", "Transporte", "Otro"].map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setUse(opt)}
-                        className="py-2.5 px-2 text-center transition-colors"
-                        style={{
-                          borderRadius: "var(--radius)",
-                          border: `2px solid ${use === opt ? "var(--color-primary)" : "var(--color-border-light)"}`,
-                          backgroundColor: use === opt ? "rgba(36,122,76,0.08)" : "var(--color-surface-light)",
-                          fontFamily: "var(--font-body)",
-                          fontSize: "var(--text-xs)",
-                          fontWeight: 500,
-                          color: use === opt ? "var(--color-primary)" : "var(--color-text-dark)",
-                          cursor: "pointer",
-                        }}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Interest */}
-                <div>
-                  <label style={labelStyle}>Me interesa</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["Comprar", "Rentar"].map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setInterest(opt)}
-                        className="py-3 px-4 text-center transition-colors"
-                        style={{
-                          borderRadius: "var(--radius)",
-                          border: `2px solid ${interest === opt ? "var(--color-primary)" : "var(--color-border-light)"}`,
-                          backgroundColor: interest === opt ? "rgba(36,122,76,0.08)" : "var(--color-surface-light)",
-                          fontFamily: "var(--font-body)",
-                          fontSize: "var(--text-sm)",
-                          fontWeight: 600,
-                          color: interest === opt ? "var(--color-primary)" : "var(--color-text-dark)",
-                          cursor: "pointer",
-                        }}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* City */}
-                <div>
-                  <label style={labelStyle}>Ciudad de entrega</label>
-                  <select value={city} onChange={(e) => setCity(e.target.value)} style={inputStyle}>
-                    <option value="">Selecciona</option>
-                    <option>Monterrey</option>
-                    <option>Querétaro</option>
-                    <option>Guadalajara</option>
-                    <option>San Luis Potosí</option>
-                    <option>Altamira</option>
-                    <option>Mérida</option>
-                    <option>Otra ciudad</option>
-                  </select>
-                </div>
-
-                {/* Company */}
-                <div>
-                  <label style={labelStyle}>Empresa (opcional)</label>
-                  <input
-                    type="text"
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
-                    placeholder="Nombre de tu empresa"
-                    style={inputStyle}
-                  />
-                </div>
-
-                {/* Name */}
-                <div>
-                  <label style={labelStyle}>Nombre completo *</label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Tu nombre"
-                    style={inputStyle}
-                  />
-                </div>
-
-                {/* Phone */}
-                <div>
-                  <label style={labelStyle}>Teléfono *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="(81) 1234 5678"
-                    style={inputStyle}
-                  />
-                </div>
-
-                {/* Message - full width */}
-                <div className="md:col-span-2">
-                  <label style={labelStyle}>Mensaje adicional (opcional)</label>
-                  <textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Cuéntanos más sobre lo que necesitas..."
-                    rows={3}
-                    style={{
-                      ...inputStyle,
-                      resize: "vertical" as const,
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Submit */}
-              <div
-                className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-5"
-                style={{ borderTop: "var(--border-width) solid var(--color-border-light)" }}
-              >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
                 <p
-                  className="flex-1"
                   style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-xs)",
-                    color: "var(--color-text-muted-dark)",
-                    lineHeight: 1.5,
+                    fontFamily: "var(--font-heading)",
+                    fontSize: "var(--text-lg)",
+                    fontWeight: 700,
+                    color: "var(--color-text-dark)",
+                    letterSpacing: "var(--heading-tracking)",
                   }}
                 >
-                  {submitted
-                    ? "Solicitud enviada. Nuestro equipo te contactará en breve."
-                    : "Te enviaremos tu cotización por correo electrónico."}
+                  {submitted ? "Solicitud enviada" : step === 1 ? "Configura tu cotización" : "Tus datos de contacto"}
                 </p>
-                <button
-                  type="submit"
-                  disabled={!allFilled || sending || submitted}
-                  className="shrink-0 inline-flex items-center gap-2 transition-transform active:scale-[0.98]"
-                  style={{
-                    backgroundColor: submitted ? "var(--color-primary)" : allFilled && !sending ? "var(--color-primary)" : "var(--color-border-light)",
-                    color: allFilled || submitted ? "var(--color-on-primary)" : "var(--color-text-muted-dark)",
-                    fontFamily: "var(--font-body)",
-                    fontSize: "var(--text-base)",
-                    fontWeight: 600,
-                    padding: "0.875rem 2rem",
-                    borderRadius: "var(--radius)",
-                    cursor: allFilled && !sending && !submitted ? "pointer" : "not-allowed",
-                  }}
-                >
-                  <PaperPlaneTilt size={18} weight="fill" />
-                  {submitted ? "Enviado" : sending ? "Enviando..." : "Enviar cotización"}
-                  {!submitted && !sending && <ArrowRight size={14} weight="bold" />}
-                </button>
+                {!submitted && (
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "var(--text-xs)",
+                      color: "var(--color-text-muted-dark)",
+                    }}
+                  >
+                    Paso {step} de 2
+                  </span>
+                )}
               </div>
-            </form>
+
+              {submitted ? (
+                <div className="py-8 text-center">
+                  <p
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-lg)",
+                      color: "var(--color-primary)",
+                      fontWeight: 600,
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Recibimos tu solicitud
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-sm)",
+                      color: "var(--color-text-muted-dark)",
+                    }}
+                  >
+                    Nuestro equipo te contactará en breve con tu cotización.
+                  </p>
+                </div>
+              ) : step === 1 ? (
+                <div className="flex flex-col gap-5">
+                  <div>
+                    <label style={labelStyle}>Me interesa</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {["Comprar", "Rentar"].map((opt) => (
+                        <button key={opt} type="button" onClick={() => setInterest(opt)} className="transition-colors" style={optionBtn(interest === opt)}>
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Tamaño del contenedor</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {["20 pies", "40 pies"].map((opt) => (
+                        <button key={opt} type="button" onClick={() => setSize(opt)} className="transition-colors" style={optionBtn(size === opt)}>
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Ciudad de entrega</label>
+                    <select value={city} onChange={(e) => setCity(e.target.value)} style={inputStyle}>
+                      <option value="">Selecciona una ciudad</option>
+                      <option>Monterrey</option>
+                      <option>Querétaro</option>
+                      <option>Guadalajara</option>
+                      <option>San Luis Potosí</option>
+                      <option>Altamira</option>
+                      <option>Mérida</option>
+                      <option>Otra ciudad</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={!step1Valid}
+                    onClick={() => setStep(2)}
+                    className="w-full py-3 inline-flex items-center justify-center gap-2 transition-transform active:scale-[0.98]"
+                    style={{
+                      borderRadius: "var(--radius)",
+                      backgroundColor: step1Valid ? "var(--color-primary)" : "var(--color-border-light)",
+                      color: step1Valid ? "var(--color-on-primary)" : "var(--color-text-muted-dark)",
+                      fontFamily: "var(--font-body)",
+                      fontSize: "var(--text-base)",
+                      fontWeight: 600,
+                      cursor: step1Valid ? "pointer" : "not-allowed",
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    Siguiente
+                    <ArrowRight size={16} weight="bold" />
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                  {/* Summary */}
+                  <div
+                    className="p-4"
+                    style={{
+                      borderRadius: "var(--radius)",
+                      backgroundColor: "rgba(36,122,76,0.06)",
+                      border: "var(--border-width) solid rgba(36,122,76,0.15)",
+                    }}
+                  >
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-muted-dark)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "4px" }}>
+                      Tu selección
+                    </p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-dark)" }}>
+                      {interest} contenedor de {size} en {city}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Nombre completo *</label>
+                    <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre" style={inputStyle} />
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Teléfono *</label>
+                    <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(81) 1234 5678" style={inputStyle} />
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Empresa (opcional)</label>
+                    <input type="text" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Nombre de tu empresa" style={inputStyle} />
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Mensaje adicional (opcional)</label>
+                    <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Cuéntanos más sobre lo que necesitas..." rows={3} style={{ ...inputStyle, resize: "vertical" as const }} />
+                  </div>
+
+                  <div className="flex gap-3 mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="py-3 px-5 inline-flex items-center gap-2 transition-colors"
+                      style={{
+                        borderRadius: "var(--radius)",
+                        border: "var(--border-width) solid var(--color-border-light)",
+                        fontFamily: "var(--font-body)",
+                        fontSize: "var(--text-sm)",
+                        fontWeight: 600,
+                        color: "var(--color-text-muted-dark)",
+                        backgroundColor: "transparent",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <ArrowLeft size={14} weight="bold" />
+                      Atrás
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={!step2Valid || sending}
+                      className="flex-1 py-3 inline-flex items-center justify-center gap-2 transition-transform active:scale-[0.98]"
+                      style={{
+                        borderRadius: "var(--radius)",
+                        backgroundColor: step2Valid && !sending ? "var(--color-primary)" : "var(--color-border-light)",
+                        color: step2Valid ? "var(--color-on-primary)" : "var(--color-text-muted-dark)",
+                        fontFamily: "var(--font-body)",
+                        fontSize: "var(--text-base)",
+                        fontWeight: 600,
+                        cursor: step2Valid && !sending ? "pointer" : "not-allowed",
+                      }}
+                    >
+                      <PaperPlaneTilt size={18} weight="fill" />
+                      {sending ? "Enviando..." : "Enviar cotización"}
+                    </button>
+                  </div>
+
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-xs)", color: "var(--color-text-muted-dark)", lineHeight: 1.5, textAlign: "center" }}>
+                    Te enviaremos tu cotización por correo electrónico.
+                  </p>
+                </form>
+              )}
+            </div>
           </motion.div>
         </div>
       </div>
