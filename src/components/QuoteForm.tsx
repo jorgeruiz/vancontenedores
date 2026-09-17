@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, type FormEvent } from "react";
-import { X, WhatsappLogo, ArrowRight } from "@phosphor-icons/react";
+import { useState, type FormEvent } from "react";
+import { X, WhatsappLogo, ArrowRight, ArrowLeft } from "@phosphor-icons/react";
 
 interface QuoteFormProps {
   isOpen: boolean;
@@ -10,14 +10,12 @@ interface QuoteFormProps {
 
 function trackConversion(type: "form_submit" | "whatsapp_click") {
   if (typeof window === "undefined") return;
-  // GTM dataLayer
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
     event: "whatsapp_cotizacion",
     form_type: "whatsapp_popup",
     conversion_type: type,
   });
-  // gtag
   if (typeof window.gtag === "function") {
     window.gtag("event", "conversion", {
       event_category: "lead",
@@ -25,52 +23,83 @@ function trackConversion(type: "form_submit" | "whatsapp_click") {
       value: 1,
     });
   }
-  // fbq
   if (typeof window.fbq === "function") {
     window.fbq("track", "Contact");
   }
 }
 
+const inputStyle = {
+  borderRadius: "var(--radius)",
+  border: "var(--border-width) solid var(--color-border-light)",
+  backgroundColor: "var(--color-surface-light)",
+  fontFamily: "var(--font-body)",
+  fontSize: "var(--text-sm)",
+  color: "var(--color-text-dark)",
+  padding: "0.75rem 1rem",
+  width: "100%",
+} as const;
+
+const labelStyle = {
+  fontFamily: "var(--font-body)",
+  fontSize: "var(--text-xs)",
+  fontWeight: 600,
+  color: "var(--color-text-dark)",
+  marginBottom: "0.5rem",
+  display: "block",
+} as const;
+
+const optionBtn = (selected: boolean) => ({
+  borderRadius: "var(--radius)",
+  border: `2px solid ${selected ? "var(--color-primary)" : "var(--color-border-light)"}`,
+  backgroundColor: selected ? "rgba(36,122,76,0.08)" : "var(--color-surface-light)",
+  fontFamily: "var(--font-body)",
+  fontSize: "var(--text-sm)",
+  fontWeight: 600,
+  color: selected ? "var(--color-primary)" : "var(--color-text-dark)",
+  cursor: "pointer" as const,
+  padding: "0.75rem 1rem",
+  textAlign: "center" as const,
+});
+
 export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
   const [step, setStep] = useState(1);
+  const [interest, setInterest] = useState("");
   const [size, setSize] = useState("");
-  const [use, setUse] = useState("");
   const [city, setCity] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
-  const formRef = useRef<HTMLFormElement>(null);
 
   if (!isOpen) return null;
 
+  const step1Valid = interest && size && city;
+  const step2Valid = name && phone;
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (!step2Valid) return;
     trackConversion("form_submit");
 
-    const message = encodeURIComponent(
-      `Hola, me interesa rentar un contenedor.\n\n` +
+    const msg = encodeURIComponent(
+      `Hola, me interesa ${interest.toLowerCase()} un contenedor.\n\n` +
       `Nombre: ${name}\n` +
       `Empresa: ${company || "N/A"}\n` +
       `Teléfono: ${phone}\n` +
       `Tamaño: ${size}\n` +
-      `Uso: ${use}\n` +
       `Ciudad: ${city}`
     );
 
     trackConversion("whatsapp_click");
-    window.open(`https://wa.me/528184692252?text=${message}`, "_blank");
+    window.open(`https://wa.me/528184692252?text=${msg}`, "_blank");
     onClose();
     setStep(1);
+    setInterest("");
     setSize("");
-    setUse("");
     setCity("");
     setName("");
     setPhone("");
     setCompany("");
   };
-
-  const canAdvance =
-    step === 1 ? size && use && city : name && phone;
 
   return (
     <div
@@ -114,7 +143,7 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
               }}
             >
               {step === 1
-                ? "Llena la siguiente información para ofrecerte un mejor servicio"
+                ? "Configura tu cotización"
                 : "Completa tus datos de contacto"}
             </p>
             <p
@@ -130,115 +159,42 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
           <button
             onClick={onClose}
             className="flex items-center justify-center w-8 h-8"
-            style={{ color: "var(--color-text-muted-dark)" }}
+            style={{ color: "var(--color-text-muted-dark)", cursor: "pointer" }}
             aria-label="Cerrar"
           >
             <X size={20} weight="bold" />
           </button>
         </div>
 
-        <form ref={formRef} onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <div className="px-6 py-6 flex flex-col gap-5">
             {step === 1 ? (
               <>
-                {/* Size */}
-                <fieldset>
-                  <legend
-                    className="mb-2"
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      fontWeight: 600,
-                      color: "var(--color-text-dark)",
-                    }}
-                  >
-                    Tamaño del contenedor
-                  </legend>
+                <div>
+                  <label style={labelStyle}>Me interesa</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {["Comprar", "Rentar"].map((opt) => (
+                      <button key={opt} type="button" onClick={() => setInterest(opt)} className="transition-colors" style={optionBtn(interest === opt)}>
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Tamaño del contenedor</label>
                   <div className="grid grid-cols-2 gap-2">
                     {["20 pies", "40 pies"].map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setSize(opt)}
-                        className="py-3 px-4 text-center transition-colors"
-                        style={{
-                          borderRadius: "var(--radius)",
-                          border: `2px solid ${size === opt ? "var(--color-primary)" : "var(--color-border-light)"}`,
-                          backgroundColor: size === opt ? "rgba(36,122,76,0.08)" : "var(--color-surface-light)",
-                          fontFamily: "var(--font-mono)",
-                          fontSize: "var(--text-sm)",
-                          fontWeight: 600,
-                          color: size === opt ? "var(--color-primary)" : "var(--color-text-dark)",
-                        }}
-                      >
+                      <button key={opt} type="button" onClick={() => setSize(opt)} className="transition-colors" style={optionBtn(size === opt)}>
                         {opt}
                       </button>
                     ))}
                   </div>
-                </fieldset>
+                </div>
 
-                {/* Use */}
-                <fieldset>
-                  <legend
-                    className="mb-2"
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      fontWeight: 600,
-                      color: "var(--color-text-dark)",
-                    }}
-                  >
-                    Uso principal
-                  </legend>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["Almacenaje en obra", "Bodega temporal", "Transporte", "Otro"].map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setUse(opt)}
-                        className="py-3 px-3 text-center transition-colors"
-                        style={{
-                          borderRadius: "var(--radius)",
-                          border: `2px solid ${use === opt ? "var(--color-primary)" : "var(--color-border-light)"}`,
-                          backgroundColor: use === opt ? "rgba(36,122,76,0.08)" : "var(--color-surface-light)",
-                          fontFamily: "var(--font-body)",
-                          fontSize: "var(--text-xs)",
-                          fontWeight: 500,
-                          color: use === opt ? "var(--color-primary)" : "var(--color-text-dark)",
-                        }}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </fieldset>
-
-                {/* City */}
                 <div>
-                  <label
-                    className="block mb-2"
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      fontWeight: 600,
-                      color: "var(--color-text-dark)",
-                    }}
-                  >
-                    Ciudad de entrega
-                  </label>
-                  <select
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full py-3 px-4 appearance-none"
-                    style={{
-                      borderRadius: "var(--radius)",
-                      border: "var(--border-width) solid var(--color-border-light)",
-                      backgroundColor: "var(--color-surface-light)",
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      color: city ? "var(--color-text-dark)" : "var(--color-text-muted-dark)",
-                    }}
-                  >
+                  <label style={labelStyle}>Ciudad de entrega</label>
+                  <select value={city} onChange={(e) => setCity(e.target.value)} style={inputStyle}>
                     <option value="">Selecciona una ciudad</option>
                     <option>Monterrey</option>
                     <option>Querétaro</option>
@@ -252,95 +208,6 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
               </>
             ) : (
               <>
-                <div>
-                  <label
-                    className="block mb-2"
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      fontWeight: 600,
-                      color: "var(--color-text-dark)",
-                    }}
-                  >
-                    Nombre completo *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Tu nombre"
-                    className="w-full py-3 px-4"
-                    style={{
-                      borderRadius: "var(--radius)",
-                      border: "var(--border-width) solid var(--color-border-light)",
-                      backgroundColor: "var(--color-surface-light)",
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      color: "var(--color-text-dark)",
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label
-                    className="block mb-2"
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      fontWeight: 600,
-                      color: "var(--color-text-dark)",
-                    }}
-                  >
-                    Teléfono *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="(81) 1234 5678"
-                    className="w-full py-3 px-4"
-                    style={{
-                      borderRadius: "var(--radius)",
-                      border: "var(--border-width) solid var(--color-border-light)",
-                      backgroundColor: "var(--color-surface-light)",
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      color: "var(--color-text-dark)",
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label
-                    className="block mb-2"
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      fontWeight: 600,
-                      color: "var(--color-text-dark)",
-                    }}
-                  >
-                    Empresa (opcional)
-                  </label>
-                  <input
-                    type="text"
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
-                    placeholder="Nombre de tu empresa"
-                    className="w-full py-3 px-4"
-                    style={{
-                      borderRadius: "var(--radius)",
-                      border: "var(--border-width) solid var(--color-border-light)",
-                      backgroundColor: "var(--color-surface-light)",
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      color: "var(--color-text-dark)",
-                    }}
-                  />
-                </div>
-
                 {/* Summary */}
                 <div
                   className="p-4"
@@ -350,27 +217,27 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
                     border: "var(--border-width) solid rgba(36,122,76,0.15)",
                   }}
                 >
-                  <p
-                    className="mb-1"
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--text-xs)",
-                      color: "var(--color-text-muted-dark)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                    }}
-                  >
-                    Tu cotización
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--color-text-muted-dark)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "4px" }}>
+                    Tu selección
                   </p>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "var(--text-sm)",
-                      color: "var(--color-text-dark)",
-                    }}
-                  >
-                    Contenedor de {size} para {use.toLowerCase()} en {city}
+                  <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "var(--color-text-dark)" }}>
+                    {interest} contenedor de {size} en {city}
                   </p>
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Nombre completo *</label>
+                  <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre" style={inputStyle} />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Teléfono *</label>
+                  <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(81) 1234 5678" style={inputStyle} />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Empresa (opcional)</label>
+                  <input type="text" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Nombre de tu empresa" style={inputStyle} />
                 </div>
               </>
             )}
@@ -387,7 +254,7 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="flex-1 py-3 transition-colors"
+                className="py-3 px-5 inline-flex items-center gap-2 transition-colors"
                 style={{
                   borderRadius: "var(--radius)",
                   border: "var(--border-width) solid var(--color-border-light)",
@@ -396,8 +263,10 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
                   fontWeight: 600,
                   color: "var(--color-text-muted-dark)",
                   backgroundColor: "transparent",
+                  cursor: "pointer",
                 }}
               >
+                <ArrowLeft size={14} weight="bold" />
                 Atrás
               </button>
             )}
@@ -405,17 +274,17 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
             {step === 1 ? (
               <button
                 type="button"
-                disabled={!canAdvance}
+                disabled={!step1Valid}
                 onClick={() => setStep(2)}
                 className="flex-1 py-3 inline-flex items-center justify-center gap-2 transition-transform active:scale-[0.98]"
                 style={{
                   borderRadius: "var(--radius)",
-                  backgroundColor: canAdvance ? "var(--color-primary)" : "var(--color-border-light)",
-                  color: canAdvance ? "var(--color-on-primary)" : "var(--color-text-muted-dark)",
+                  backgroundColor: step1Valid ? "var(--color-primary)" : "var(--color-border-light)",
+                  color: step1Valid ? "var(--color-on-primary)" : "var(--color-text-muted-dark)",
                   fontFamily: "var(--font-body)",
                   fontSize: "var(--text-sm)",
                   fontWeight: 600,
-                  cursor: canAdvance ? "pointer" : "not-allowed",
+                  cursor: step1Valid ? "pointer" : "not-allowed",
                 }}
               >
                 Siguiente
@@ -424,16 +293,16 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
             ) : (
               <button
                 type="submit"
-                disabled={!canAdvance}
+                disabled={!step2Valid}
                 className="flex-1 py-3 inline-flex items-center justify-center gap-2 transition-transform active:scale-[0.98]"
                 style={{
                   borderRadius: "var(--radius)",
-                  backgroundColor: canAdvance ? "#25D366" : "var(--color-border-light)",
-                  color: canAdvance ? "#FFFFFF" : "var(--color-text-muted-dark)",
+                  backgroundColor: step2Valid ? "#25D366" : "var(--color-border-light)",
+                  color: step2Valid ? "#FFFFFF" : "var(--color-text-muted-dark)",
                   fontFamily: "var(--font-body)",
                   fontSize: "var(--text-sm)",
                   fontWeight: 600,
-                  cursor: canAdvance ? "pointer" : "not-allowed",
+                  cursor: step2Valid ? "pointer" : "not-allowed",
                 }}
               >
                 <WhatsappLogo size={18} weight="fill" />

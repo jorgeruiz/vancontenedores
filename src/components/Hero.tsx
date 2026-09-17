@@ -1,63 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ArrowRight, WhatsappLogo } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { useQuote } from "./QuoteProvider";
 
-const CITY_MAP: Record<string, string> = {
-  monterrey: "Monterrey",
-  "san pedro garza garcia": "Monterrey",
-  "santa catarina": "Monterrey",
-  apodaca: "Monterrey",
-  escobedo: "Monterrey",
-  guadalupe: "Monterrey",
-  queretaro: "Querétaro",
-  guadalajara: "Guadalajara",
-  zapopan: "Guadalajara",
-  "san luis potosi": "San Luis Potosí",
-  altamira: "Altamira",
-  tampico: "Altamira",
-  merida: "Mérida",
-};
-
-function useDynamicCity(): string {
-  const [city, setCity] = useState("México");
-
-  useEffect(() => {
-    async function detect() {
-      try {
-        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        if (tz.includes("Monterrey") || tz.includes("Mexico_City")) {
-          // Try geolocation API for more precision
-          const res = await fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(3000) });
-          if (res.ok) {
-            const data = await res.json();
-            const cityName = (data.city || "").toLowerCase();
-            const region = (data.region || "").toLowerCase();
-            const match = CITY_MAP[cityName] || CITY_MAP[region];
-            if (match) setCity(match);
-          }
-        }
-      } catch {
-        // Keep default "México"
-      }
-    }
-    detect();
-  }, []);
-
-  return city;
+interface HeroProps {
+  city?: string;
+  subtitle?: string;
 }
 
-export default function Hero() {
+export default function Hero({ city, subtitle }: HeroProps) {
   const reduce = useReducedMotion();
   const { openQuote } = useQuote();
-  const dynamicCity = useDynamicCity();
+
+  const heading = city
+    ? `Renta de Contenedores Marítimos en ${city}`
+    : "Renta de Contenedores Marítimos";
+
+  const desc = subtitle
+    || "Almacenaje temporal en sitio para constructoras y empresas. Cobertura nacional desde 6 sucursales.";
 
   return (
     <section id="hero">
-      {/* Block 1: Solid dark background with content - shorter */}
+      {/* Block 1: Solid dark background with content */}
       <div
         className="relative flex flex-col justify-center"
         style={{
@@ -78,7 +44,7 @@ export default function Hero() {
               fontSize: "clamp(12rem, 22vw, 20rem)",
               fontWeight: 700,
               color: "transparent",
-              WebkitTextStroke: "1px rgba(255,255,255,0.06)",
+              WebkitTextStroke: "2px rgba(255,255,255,0.15)",
               lineHeight: 0.85,
               letterSpacing: "-0.05em",
             }}
@@ -94,10 +60,10 @@ export default function Hero() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             <div
-              className="inline-flex items-center gap-2 mb-6 px-4 py-2"
+              className="inline-flex items-center gap-2.5 mb-6 px-5 py-2.5"
               style={{
                 borderRadius: "var(--radius)",
-                border: "var(--border-width) solid var(--color-border)",
+                border: "1px solid rgba(255,255,255,0.15)",
                 backgroundColor: "var(--color-surface)",
               }}
             >
@@ -108,7 +74,7 @@ export default function Hero() {
               <span
                 style={{
                   fontFamily: "var(--font-mono)",
-                  fontSize: "var(--text-xs)",
+                  fontSize: "var(--text-sm)",
                   color: "var(--color-text)",
                   letterSpacing: "0.06em",
                 }}
@@ -133,8 +99,14 @@ export default function Hero() {
               maxWidth: "18ch",
             }}
           >
-            Renta de Contenedores Marítimos en{" "}
-            <span style={{ color: "var(--color-primary)" }}>{dynamicCity}</span>
+            {city ? (
+              <>
+                Renta de Contenedores Marítimos en{" "}
+                <span style={{ color: "var(--color-primary)" }}>{city}</span>
+              </>
+            ) : (
+              "Renta de Contenedores Marítimos"
+            )}
           </motion.h1>
 
           <motion.div
@@ -152,7 +124,7 @@ export default function Hero() {
                 lineHeight: 1.6,
               }}
             >
-              Almacenaje temporal en sitio para constructoras y empresas. Cobertura nacional desde 6 sucursales.
+              {desc}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 shrink-0">
@@ -205,16 +177,16 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Block 2: Image with fade-in from dark - taller */}
-      <div
-        className="relative"
-        style={{ minHeight: "65dvh" }}
-      >
+      {/* Block 2: Image at original size, no zoom/crop */}
+      <div className="relative" style={{ backgroundColor: "var(--color-bg)" }}>
         <Image
           src="/images/client-m1.webp"
-          alt="Fila de contenedores marítimos VAN Contenedores en patio industrial"
-          fill
-          className="object-cover object-center"
+          alt={city
+            ? `Contenedores marítimos VAN Contenedores en ${city}`
+            : "Fila de contenedores marítimos VAN Contenedores en patio industrial"}
+          width={1600}
+          height={1200}
+          className="w-full h-auto"
           priority
           sizes="100vw"
         />
@@ -222,7 +194,7 @@ export default function Hero() {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "linear-gradient(to bottom, var(--color-bg) 0%, rgba(10,15,20,0.6) 25%, rgba(10,15,20,0.15) 55%, transparent 100%)",
+              "linear-gradient(to bottom, var(--color-bg) 0%, rgba(10,15,20,0.6) 15%, rgba(10,15,20,0.1) 40%, transparent 100%)",
           }}
         />
       </div>

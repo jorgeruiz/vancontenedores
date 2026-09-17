@@ -49,23 +49,6 @@ export default function Navbar() {
             </a>
           ))}
 
-          {/* WhatsApp - opens quote popup */}
-          <button
-            onClick={openQuote}
-            className="flex items-center justify-center w-9 h-9 transition-colors"
-            style={{
-              borderRadius: "50%",
-              border: "var(--border-width) solid var(--color-border-light)",
-              color: "var(--color-text-muted-dark)",
-              cursor: "pointer",
-            }}
-            aria-label="Cotizar por WhatsApp"
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#25D366")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted-dark)")}
-          >
-            <WhatsappLogo size={18} weight="fill" />
-          </button>
-
           {/* Phone */}
           <a
             href="tel:+528184692252"
@@ -82,10 +65,10 @@ export default function Navbar() {
             (81) 8469 2252
           </a>
 
-          {/* CTA */}
+          {/* CTA with WhatsApp icon */}
           <button
             onClick={openQuote}
-            className="inline-flex items-center transition-transform active:scale-[0.98]"
+            className="inline-flex items-center gap-2 transition-transform active:scale-[0.98]"
             style={{
               backgroundColor: "var(--color-primary)",
               color: "var(--color-on-primary)",
@@ -97,7 +80,8 @@ export default function Navbar() {
               cursor: "pointer",
             }}
           >
-            Cotiza!
+            <WhatsappLogo size={16} weight="fill" />
+            Cotiza
           </button>
         </div>
 
@@ -131,14 +115,6 @@ export default function Navbar() {
             ))}
 
             <div className="flex items-center gap-4 pt-2" style={{ borderTop: "var(--border-width) solid var(--color-border-light)" }}>
-              <button
-                onClick={() => { setOpen(false); openQuote(); }}
-                className="flex items-center gap-2"
-                style={{ fontFamily: "var(--font-body)", fontSize: "var(--text-sm)", color: "#25D366", cursor: "pointer" }}
-              >
-                <WhatsappLogo size={20} weight="fill" />
-                WhatsApp
-              </button>
               <a
                 href="tel:+528184692252"
                 className="flex items-center gap-2"
@@ -151,7 +127,7 @@ export default function Navbar() {
 
             <button
               onClick={() => { setOpen(false); openQuote(); }}
-              className="inline-flex items-center justify-center mt-2 transition-transform active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-2 mt-2 transition-transform active:scale-[0.98]"
               style={{
                 backgroundColor: "var(--color-primary)",
                 color: "var(--color-on-primary)",
@@ -163,7 +139,8 @@ export default function Navbar() {
                 cursor: "pointer",
               }}
             >
-              Cotiza!
+              <WhatsappLogo size={18} weight="fill" />
+              Cotiza
             </button>
           </div>
         </div>
