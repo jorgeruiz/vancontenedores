@@ -177,16 +177,18 @@ export default function Hero({ city, subtitle }: HeroProps) {
         </div>
       </div>
 
-      {/* Block 2: Image at original size, no zoom/crop */}
-      <div className="relative" style={{ backgroundColor: "var(--color-bg)" }}>
+      {/* Block 2: Image cropped to focus on containers */}
+      <div
+        className="relative"
+        style={{ height: "clamp(300px, 45vw, 550px)" }}
+      >
         <Image
           src="/images/client-m1.webp"
           alt={city
             ? `Contenedores marítimos VAN Contenedores en ${city}`
             : "Fila de contenedores marítimos VAN Contenedores en patio industrial"}
-          width={1600}
-          height={1200}
-          className="w-full h-auto"
+          fill
+          className="object-cover object-center"
           priority
           sizes="100vw"
         />
