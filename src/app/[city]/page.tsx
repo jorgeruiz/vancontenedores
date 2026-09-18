@@ -23,42 +23,42 @@ interface CityData {
 }
 
 const CITIES: Record<string, CityData> = {
-  monterrey: {
+  "renta-contenedores-monterrey": {
     name: "Monterrey",
     region: "Nuevo León",
     subtitle: "Almacenaje temporal en sitio para constructoras y empresas en el área metropolitana de Monterrey. Entrega en menos de 24 horas.",
     metaTitle: "Renta de Contenedores Marítimos en Monterrey | VAN Contenedores",
     metaDescription: "Renta de contenedores marítimos de 20 y 40 pies en Monterrey y área metropolitana. Entrega en menos de 24 horas. Almacenaje temporal para constructoras y empresas.",
   },
-  queretaro: {
+  "renta-contenedores-queretaro": {
     name: "Querétaro",
     region: "Querétaro",
     subtitle: "Contenedores marítimos para almacenaje y transporte en Querétaro. Entrega rápida desde nuestra sucursal local.",
     metaTitle: "Renta de Contenedores Marítimos en Querétaro | VAN Contenedores",
     metaDescription: "Renta de contenedores marítimos de 20 y 40 pies en Querétaro. Entrega en menos de 24 horas. Almacenaje temporal para constructoras y empresas.",
   },
-  guadalajara: {
+  "renta-contenedores-guadalajara": {
     name: "Guadalajara",
     region: "Jalisco",
     subtitle: "Almacenaje temporal y transporte con contenedores marítimos en Guadalajara y zona metropolitana. Sucursal local con entrega inmediata.",
     metaTitle: "Renta de Contenedores Marítimos en Guadalajara | VAN Contenedores",
     metaDescription: "Renta de contenedores marítimos de 20 y 40 pies en Guadalajara y zona metropolitana. Entrega en menos de 24 horas desde nuestra sucursal en Jalisco.",
   },
-  "san-luis-potosi": {
+  "renta-contenedores-san-luis-potosi": {
     name: "San Luis Potosí",
     region: "San Luis Potosí",
     subtitle: "Contenedores marítimos para almacenaje en obra y bodega temporal en San Luis Potosí. Entrega rápida con sucursal local.",
     metaTitle: "Renta de Contenedores Marítimos en San Luis Potosí | VAN Contenedores",
     metaDescription: "Renta de contenedores marítimos de 20 y 40 pies en San Luis Potosí. Entrega en menos de 24 horas. Almacenaje temporal para constructoras y empresas.",
   },
-  altamira: {
+  "renta-contenedores-altamira": {
     name: "Altamira",
     region: "Tamaulipas",
     subtitle: "Contenedores marítimos para almacenaje y logística portuaria en Altamira y Tampico. Sucursal estratégica en zona portuaria.",
     metaTitle: "Renta de Contenedores Marítimos en Altamira | VAN Contenedores",
     metaDescription: "Renta de contenedores marítimos de 20 y 40 pies en Altamira y Tampico. Entrega en menos de 24 horas desde nuestra sucursal en zona portuaria.",
   },
-  merida: {
+  "renta-contenedores-merida": {
     name: "Mérida",
     region: "Yucatán",
     subtitle: "Almacenaje temporal y contenedores marítimos en Mérida y península de Yucatán. Cobertura regional con entrega rápida.",
@@ -84,13 +84,13 @@ export async function generateMetadata(
     openGraph: {
       title: data.metaTitle,
       description: data.metaDescription,
-      url: `https://vancontenedores.com/renta-contenedores-${city}/`,
+      url: `https://vancontenedores.com/${city}/`,
       siteName: "VAN Contenedores",
       type: "website",
       locale: "es_MX",
     },
     alternates: {
-      canonical: `https://vancontenedores.com/renta-contenedores-${city}/`,
+      canonical: `https://vancontenedores.com/${city}/`,
     },
   };
 }
@@ -109,7 +109,7 @@ export default async function CityPage({
     "@type": "LocalBusiness",
     name: `VAN Contenedores ${data.name}`,
     description: data.metaDescription,
-    url: `https://vancontenedores.com/renta-contenedores-${city}/`,
+    url: `https://vancontenedores.com/${city}/`,
     telephone: "+52-81-8469-2252",
     address: {
       "@type": "PostalAddress",

@@ -7,6 +7,9 @@ import { motion, useReducedMotion } from "motion/react";
 
 const PHOTOS = [
   { src: "/images/client-m1.webp", alt: "Fila de contenedores en patio industrial" },
+  { src: "/images/client-f97.webp", alt: "Dos contenedores en construcción de nave" },
+  { src: "/images/client-f98.webp", alt: "Contenedor en terreno de obra con vegetación" },
+  { src: "/images/client-f99.webp", alt: "Contenedor con calcomanía de renta" },
   { src: "/images/client-cargando-1.webp", alt: "Contenedor siendo transportado en camión" },
   { src: "/images/client-f1.webp", alt: "Contenedor en sitio de construcción" },
   { src: "/images/client-f2.webp", alt: "Contenedor en terreno con montañas" },
@@ -17,14 +20,11 @@ const PHOTOS = [
   { src: "/images/client-f10.webp", alt: "Contenedor con trabajador en obra" },
   { src: "/images/client-f11.webp", alt: "Contenedores en parque industrial" },
   { src: "/images/client-f12.webp", alt: "Contenedor siendo descargado con cadenas" },
-  { src: "/images/client-f97.webp", alt: "Dos contenedores en construcción de nave" },
-  { src: "/images/client-f98.webp", alt: "Contenedor en terreno de obra con vegetación" },
-  { src: "/images/client-f99.webp", alt: "Contenedor con calcomanía de renta" },
   { src: "/images/client-img-20231122-wa0010.webp", alt: "Contenedor abierto en bodega" },
   { src: "/images/client-img-20250818-wa0019.webp", alt: "Contenedor dentro de nave industrial con montacargas" },
 ];
 
-const SPEED = 0.5; // px per frame
+const SPEED = 0.5;
 const RESUME_DELAY = 4000;
 
 export default function Gallery() {
@@ -38,6 +38,15 @@ export default function Gallery() {
     pauseUntil.current = Date.now() + RESUME_DELAY;
   }, []);
 
+  // Initialize scroll to start of first set (skip the prepended clone set)
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    // Each set width = total items * (card + gap). Jump to start of middle set.
+    const setWidth = el.scrollWidth / 3;
+    el.scrollLeft = setWidth;
+  }, []);
+
   const scroll = useCallback((dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
@@ -46,7 +55,7 @@ export default function Gallery() {
     el.scrollBy({ left: dir === "left" ? -step : step, behavior: "smooth" });
   }, [pauseAutoScroll]);
 
-  // Continuous auto-scroll via requestAnimationFrame
+  // Continuous auto-scroll + infinite loop via rAF
   useEffect(() => {
     if (reduce) return;
     const el = scrollRef.current;
@@ -54,13 +63,17 @@ export default function Gallery() {
 
     const tick = () => {
       if (Date.now() >= pauseUntil.current && !dragState.current.active) {
-        const maxScroll = el.scrollWidth - el.clientWidth;
-        if (el.scrollLeft >= maxScroll - 1) {
-          el.scrollLeft = 0;
-        } else {
-          el.scrollLeft += SPEED;
-        }
+        el.scrollLeft += SPEED;
       }
+
+      // Infinite loop: 3 sets rendered, keep scroll in the middle set
+      const setWidth = el.scrollWidth / 3;
+      if (el.scrollLeft >= setWidth * 2) {
+        el.scrollLeft -= setWidth;
+      } else if (el.scrollLeft <= 0) {
+        el.scrollLeft += setWidth;
+      }
+
       rafId.current = requestAnimationFrame(tick);
     };
     rafId.current = requestAnimationFrame(tick);
@@ -68,7 +81,6 @@ export default function Gallery() {
     return () => cancelAnimationFrame(rafId.current);
   }, [reduce]);
 
-  // Mouse drag (desktop only — touch uses native scroll)
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     const el = scrollRef.current;
     if (!el) return;
@@ -92,6 +104,9 @@ export default function Gallery() {
   }, [pauseAutoScroll]);
 
   const onTouchStart = useCallback(() => pauseAutoScroll(), [pauseAutoScroll]);
+
+  // Render 3 copies for seamless infinite loop
+  const tripled = [...PHOTOS, ...PHOTOS, ...PHOTOS];
 
   return (
     <section
@@ -154,7 +169,7 @@ export default function Gallery() {
       {/* Carousel */}
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto px-[var(--gutter)] pb-4 select-none"
+        className="flex gap-4 overflow-x-auto select-none"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
@@ -166,20 +181,9 @@ export default function Gallery() {
         onMouseLeave={onMouseUp}
         onTouchStart={onTouchStart}
       >
-        {/* Left spacer for max-width alignment */}
-        <div className="shrink-0" style={{ width: "max(0px, calc((100vw - var(--content-width)) / 2 - var(--gutter)))" }} />
-
-        {PHOTOS.map((photo, i) => (
-          <motion.div
-            key={photo.src}
-            initial={reduce ? false : { opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{
-              duration: 0.5,
-              delay: i * 0.03,
-              ease: [0.16, 1, 0.3, 1],
-            }}
+        {tripled.map((photo, i) => (
+          <div
+            key={`${photo.src}-${i}`}
             className="relative shrink-0 aspect-[3/2] overflow-hidden"
             style={{
               width: "min(380px, 75vw)",
@@ -196,11 +200,8 @@ export default function Gallery() {
               sizes="380px"
               draggable={false}
             />
-          </motion.div>
+          </div>
         ))}
-
-        {/* Right spacer */}
-        <div className="shrink-0 w-4" />
       </div>
     </section>
   );
