@@ -1,7 +1,17 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { usePathname } from "next/navigation";
 import { X, WhatsappLogo, ArrowRight, ArrowLeft } from "@phosphor-icons/react";
+
+const LANDING_LABELS: Record<string, string> = {
+  "renta-contenedores-monterrey": "Landing Monterrey",
+  "renta-contenedores-queretaro": "Landing Querétaro",
+  "renta-contenedores-guadalajara": "Landing Guadalajara",
+  "renta-contenedores-san-luis-potosi": "Landing San Luis Potosí",
+  "renta-contenedores-altamira": "Landing Altamira",
+  "renta-contenedores-merida": "Landing Mérida",
+};
 
 interface QuoteFormProps {
   isOpen: boolean;
@@ -62,6 +72,7 @@ const optionBtn = (selected: boolean) => ({
 });
 
 export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
+  const pathname = usePathname();
   const [step, setStep] = useState(1);
   const [interest, setInterest] = useState("");
   const [size, setSize] = useState("");
@@ -69,6 +80,9 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
+
+  const slug = pathname.replace(/^\//, "");
+  const landingOrigin = LANDING_LABELS[slug] || "Home";
 
   if (!isOpen) return null;
 
@@ -79,6 +93,21 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
     e.preventDefault();
     if (!step2Valid) return;
     trackConversion("form_submit");
+
+    fetch("/api/quote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        phone,
+        company,
+        size,
+        use: interest,
+        city,
+        interest,
+        landing: landingOrigin,
+      }),
+    }).catch(() => {});
 
     const msg = encodeURIComponent(
       `Hola, me interesa ${interest.toLowerCase()} un contenedor.\n\n` +
