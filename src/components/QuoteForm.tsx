@@ -18,21 +18,10 @@ interface QuoteFormProps {
   onClose: () => void;
 }
 
-function trackConversion(type: "form_submit" | "whatsapp_click") {
+function pushEvent(eventName: string) {
   if (typeof window === "undefined") return;
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    event: "whatsapp_cotizacion",
-    form_type: "whatsapp_popup",
-    conversion_type: type,
-  });
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "conversion", {
-      event_category: "lead",
-      event_label: type,
-      value: 1,
-    });
-  }
+  window.dataLayer.push({ event: eventName });
   if (typeof window.fbq === "function") {
     window.fbq("track", "Contact");
   }
@@ -92,7 +81,7 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!step2Valid) return;
-    trackConversion("form_submit");
+    pushEvent("cotizacion_whatsapp");
 
     fetch("/api/quote", {
       method: "POST",
@@ -118,7 +107,6 @@ export default function QuoteForm({ isOpen, onClose }: QuoteFormProps) {
       `Ciudad: ${city}`
     );
 
-    trackConversion("whatsapp_click");
     window.open(`https://wa.me/528184692252?text=${msg}`, "_blank");
     onClose();
     setStep(1);

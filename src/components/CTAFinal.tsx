@@ -1,26 +1,30 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { usePathname } from "next/navigation";
 import { ArrowRight, Phone, Envelope, PaperPlaneTilt, ArrowLeft } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 
-function trackConversion(type: "form_submit" | "whatsapp_click") {
+const LANDING_LABELS: Record<string, string> = {
+  "renta-contenedores-monterrey": "Landing Monterrey",
+  "renta-contenedores-queretaro": "Landing Querétaro",
+  "renta-contenedores-guadalajara": "Landing Guadalajara",
+  "renta-contenedores-san-luis-potosi": "Landing San Luis Potosí",
+  "renta-contenedores-altamira": "Landing Altamira",
+  "renta-contenedores-merida": "Landing Mérida",
+};
+
+function pushEvent(eventName: string) {
   if (typeof window === "undefined") return;
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    event: "cotizador_enviado",
-    form_type: "cotizador_email",
-    conversion_type: type,
-  });
-  if (typeof window.gtag === "function") {
-    window.gtag("event", "conversion", { event_category: "lead", event_label: type, value: 1 });
-  }
+  window.dataLayer.push({ event: eventName });
   if (typeof window.fbq === "function") {
     window.fbq("track", "Lead");
   }
 }
 
 export default function CTAFinal() {
+  const pathname = usePathname();
   const reduce = useReducedMotion();
   const [step, setStep] = useState(1);
   const [interest, setInterest] = useState("");
@@ -41,13 +45,13 @@ export default function CTAFinal() {
     if (!step2Valid || sending) return;
 
     setSending(true);
-    trackConversion("form_submit");
+    pushEvent("cotizador_enviado");
 
     try {
       const res = await fetch("/api/quote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, company, size, use: "-", city, interest, message }),
+        body: JSON.stringify({ name, phone, company, size, use: interest, city, interest, message, landing: LANDING_LABELS[pathname.replace(/^\//, "")] || "Home" }),
       });
       if (res.ok) {
         setSubmitted(true);
