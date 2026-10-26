@@ -1,16 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { MapPin } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { MEXICO_STATES_PATH } from "@/lib/mexico-map";
 
 const CITIES_LIST = [
-  { name: "Monterrey", region: "Nuevo León" },
-  { name: "Querétaro", region: "Querétaro" },
-  { name: "Guadalajara", region: "Jalisco" },
-  { name: "San Luis Potosí", region: "SLP" },
-  { name: "Altamira", region: "Tamaulipas" },
-  { name: "Mérida", region: "Yucatán" },
+  { name: "Monterrey", region: "Nuevo León", slug: "renta-contenedores-monterrey" },
+  { name: "Querétaro", region: "Querétaro", slug: "renta-contenedores-queretaro" },
+  { name: "Guadalajara", region: "Jalisco", slug: "renta-contenedores-guadalajara" },
+  { name: "San Luis Potosí", region: "SLP", slug: "renta-contenedores-san-luis-potosi" },
+  { name: "Altamira", region: "Tamaulipas", slug: "renta-contenedores-altamira" },
+  { name: "Mérida", region: "Yucatán", slug: "renta-contenedores-merida" },
 ];
 
 const MAP_CITIES = [
@@ -169,40 +170,45 @@ export default function Coverage() {
                 delay: i * 0.06,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="flex flex-col items-center gap-2 py-6 px-3"
               style={{
-                backgroundColor: "var(--color-surface)",
                 borderRight:
                   i < CITIES_LIST.length - 1
                     ? "var(--border-width) solid var(--color-border)"
                     : "none",
               }}
             >
-              <MapPin
-                size={16}
-                weight="fill"
-                style={{ color: "var(--color-primary)" }}
-              />
-              <span
-                style={{
-                  fontFamily: "var(--font-heading)",
-                  fontSize: "var(--text-sm)",
-                  fontWeight: 600,
-                  color: "var(--color-text)",
-                  textAlign: "center",
-                }}
+              <Link
+                href={`/${city.slug}`}
+                className="flex flex-col items-center gap-2 py-6 px-3 transition-colors"
+                style={{ backgroundColor: "var(--color-surface)" }}
+                title={`Renta de contenedores en ${city.name}`}
               >
-                {city.name}
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "var(--text-xs)",
-                  color: "var(--color-text-muted)",
-                }}
-              >
-                {city.region}
-              </span>
+                <MapPin
+                  size={16}
+                  weight="fill"
+                  style={{ color: "var(--color-primary)" }}
+                />
+                <span
+                  style={{
+                    fontFamily: "var(--font-heading)",
+                    fontSize: "var(--text-sm)",
+                    fontWeight: 600,
+                    color: "var(--color-text)",
+                    textAlign: "center",
+                  }}
+                >
+                  {city.name}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "var(--text-xs)",
+                    color: "var(--color-text-muted)",
+                  }}
+                >
+                  {city.region}
+                </span>
+              </Link>
             </motion.div>
           ))}
         </div>
